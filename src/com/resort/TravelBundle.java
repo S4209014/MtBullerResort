@@ -141,7 +141,10 @@ public class TravelBundle implements Pricable {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < family.size(); i++) {
             FamilyMember member = family.get(i);
-            sb.append(member.getName()).append(" (").append(member.getLevel()).append("); ");
+            if (i > 0) {
+                sb.append("  ");
+            }
+            sb.append(member.getName()).append(" (").append(member.getLevel()).append(");");
         }
         return sb.toString();
     }
@@ -153,7 +156,7 @@ public class TravelBundle implements Pricable {
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < liftPasses.size(); i++) {
             if (i > 0) {
-                sb.append(", ");
+                sb.append(",  ");
             }
             sb.append(liftPasses.get(i).summary());
         }
@@ -168,7 +171,7 @@ public class TravelBundle implements Pricable {
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < lessons.size(); i++) {
             if (i > 0) {
-                sb.append(", ");
+                sb.append(",  ");
             }
             sb.append(lessons.get(i).summary());
         }
@@ -179,14 +182,15 @@ public class TravelBundle implements Pricable {
     public String prettyPrint() {
         String acc = "(none yet)";
         if (accommodation != null) {
-            acc = accommodation.getLabel() + " [" + accommodation.getId() + "]";
+            acc = accommodation.getLabel() + "  [" + accommodation.getId() + "]";
         }
         StringBuilder sb = new StringBuilder();
         sb.append("Bundle #").append(id).append("\n");
-        sb.append("\tCustomer: ").append(customer.getName()).append(" (ID ").append(customer.getId()).append(")\n");
-        sb.append("\tDates: ").append(startDate).append(" for ").append(days)
-                .append(" day(s), ending ").append(getEndDate()).append("\n");
-        sb.append("\tFamily members (").append(family.size()).append("): ").append(familyLine()).append("\n");
+        sb.append("\tCustomer: ").append(customer.getName())
+                .append("  (ID ").append(customer.getId()).append(")\n");
+        sb.append("\tDates: ").append(startDate).append("  for  ").append(days)
+                .append(" days,  ending  ").append(getEndDate()).append("\n");
+        sb.append("\tFamily members (").append(family.size()).append("):  ").append(familyLine()).append("\n");
         sb.append("\tAccommodation: ").append(acc).append("\n");
         sb.append("\tLift passes: ").append(passLine()).append("\n");
         sb.append("\tLessons: ").append(lessonLine()).append("\n");

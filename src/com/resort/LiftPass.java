@@ -64,8 +64,8 @@ public class LiftPass implements Pricable {
 
     public String summary() {
         if (type == LiftPassType.SEASON) {
-            return name + ": season pass - $" + String.format("%.2f", getPrice());
+            return name + ": season pass  -  $" + String.format("%.2f", getPrice());
         }
-        return name + ": " + days + " day-pass(es) - $" + String.format("%.2f", getPrice());
+        return name + ": " + days + " day passes  -  $" + String.format("%.2f", getPrice());
     }
 }

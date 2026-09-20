@@ -53,7 +53,7 @@ public class Lesson implements Pricable {
     }
 
     public String summary() {
-        return name + ": " + count + " lesson(s) @ " + level + " level - $"
-                + String.format("%.2f", getPrice());
+        return name + ": " + count + " lessons  (" + level + ", $"
+                + String.format("%.2f", getPrice()) + ")";
     }
 }
