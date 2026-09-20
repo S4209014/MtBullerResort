@@ -1,3 +1,7 @@
+### App data ###
+bundles.db
+*.db
+
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/
