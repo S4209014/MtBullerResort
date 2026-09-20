@@ -16,7 +16,7 @@
 | Bundle unknown customer | ID 99 | No customer with that ID | Error, no bundle | Pass |
 | Family members | 2 names + levels | Family listed on bundle | Sam / Luca style line | Pass |
 | Family max | 6 | Rejected, 0–5 only | Range message | Pass |
-| Book AP01 | ID AP01 for 3 people | Attached, total = nightly * days | e.g. $630 for 3 nights at $210 | Pass |
+| Book AP01 | ID AP01 for 3 people | Attached, total = nightly × nights | e.g. $630 for 3 nights at $210 | Pass |
 | Overlap booking | Same room same dates | Not in available list | Cannot attach | Pass |
 | Lodge vs 3 people | 3 people | Lodges hidden | Only hotel/apartment | Pass |
 | 5 day-passes | 5 days for one person | 10% off → $117.00 | Lift total $117.00 | Pass |

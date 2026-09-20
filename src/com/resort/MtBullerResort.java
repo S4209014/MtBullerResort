@@ -52,6 +52,7 @@ public class MtBullerResort {
         // defaults if the db is missing or had no customers
         seedCustomers();
         bumpIds();
+        sortCustomers();
     }
 
     private void seedCustomers() {
@@ -106,10 +107,29 @@ public class MtBullerResort {
         }
     }
 
+    // keep the list in ID order so #4 is not sitting above Alice
+    private void sortCustomers() {
+        for (int i = 0; i < customers.size(); i++) {
+            int smallest = i;
+            for (int j = i + 1; j < customers.size(); j++) {
+                if (customers.get(j).getId() < customers.get(smallest).getId()) {
+                    smallest = j;
+                }
+            }
+            Customer swap = customers.get(i);
+            customers.set(i, customers.get(smallest));
+            customers.set(smallest, swap);
+        }
+    }
+
     public Customer addCustomer(String name, String contact, SkiLevel level) {
+        while (findCustomer(nextCustomerId) != null) {
+            nextCustomerId++;
+        }
         Customer customer = new Customer(nextCustomerId, name, contact, level);
         nextCustomerId++;
         customers.add(customer);
+        sortCustomers();
         return customer;
     }
 
@@ -157,14 +177,14 @@ public class MtBullerResort {
         return member;
     }
 
-    public TravelBundle createBundle(Customer customer, LocalDate start, int days) {
-        TravelBundle bundle = new TravelBundle(nextBundleId, customer, start, days);
+    public TravelBundle createBundle(Customer customer, LocalDate start, int nights) {
+        TravelBundle bundle = new TravelBundle(nextBundleId, customer, start, nights);
         nextBundleId++;
         return bundle;
     }
 
     public void attachRoom(TravelBundle bundle, Accommodation room) {
-        room.addBooking(bundle.getStartDate(), bundle.getDays());
+        room.addBooking(bundle.getStartDate(), bundle.getNights());
         bundle.setAccommodation(room);
         bundles.add(bundle);
     }
@@ -178,7 +198,7 @@ public class MtBullerResort {
     public void addBundleFromDb(TravelBundle bundle) {
         bundles.add(bundle);
         if (bundle.getAccommodation() != null) {
-            bundle.getAccommodation().addBooking(bundle.getStartDate(), bundle.getDays());
+            bundle.getAccommodation().addBooking(bundle.getStartDate(), bundle.getNights());
         }
     }
 
@@ -194,6 +214,7 @@ public class MtBullerResort {
         database.loadInto(this);
         seedCustomers();
         bumpIds();
+        sortCustomers();
         return bundles.size();
     }
 }

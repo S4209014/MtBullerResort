@@ -52,7 +52,7 @@ public class BundleDatabase {
             bundleStmt.setString(4, customer.getContact());
             bundleStmt.setString(5, customer.getLevel().name());
             bundleStmt.setString(6, bundle.getStartDate().toString());
-            bundleStmt.setInt(7, bundle.getDays());
+            bundleStmt.setInt(7, bundle.getNights());
             bundleStmt.setString(8, bundle.getAccommodation().getId());
             bundleStmt.executeUpdate();
 

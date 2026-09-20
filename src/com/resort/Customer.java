@@ -40,7 +40,11 @@ public class Customer {
         family.add(member);
     }
 
-    public String shortLine() {
-        return "Customer #" + id + ":  " + name + "  |  Contact: " + contact + "  |  Level: " + level;
+    public static String tableHeader() {
+        return String.format("%-5s  %-22s  %-28s  %s", "ID", "Name", "Contact", "Level");
+    }
+
+    public String tableRow() {
+        return String.format("#%-4d  %-22s  %-28s  %s", id, name, contact, level);
     }
 }

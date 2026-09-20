@@ -169,7 +169,8 @@ public class MtBullerAdmin {
         Customer customer = resort.addCustomer(name, contact, level);
         System.out.println();
         ok("Customer added successfully:");
-        System.out.println(customer.shortLine());
+        System.out.println(Customer.tableHeader());
+        System.out.println(customer.tableRow());
         System.out.println("(Saved to the database only if they get a bundle.)");
     }
 
@@ -177,8 +178,9 @@ public class MtBullerAdmin {
         printHeader("ALL CUSTOMERS");
         System.out.println();
         ArrayList<Customer> list = resort.getCustomers();
+        System.out.println(Customer.tableHeader());
         for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i).shortLine());
+            System.out.println(list.get(i).tableRow());
         }
     }
 
@@ -192,10 +194,10 @@ public class MtBullerAdmin {
 
         System.out.println();
         LocalDate start = readStayDate("Enter start date (yyyy-MM-dd): ", true);
-        int days = readInt("Enter stay length in days (1-60): ", 1, 60);
+        int nights = readInt("Enter stay length in nights (1-60): ", 1, 60);
         int familyCount = readInt("How many family members? (0-5): ", 0, 5);
 
-        TravelBundle bundle = resort.createBundle(customer, start, days);
+        TravelBundle bundle = resort.createBundle(customer, start, nights);
         for (int i = 1; i <= familyCount; i++) {
             System.out.println();
             System.out.println("Family member " + i + " of " + familyCount);
@@ -210,7 +212,7 @@ public class MtBullerAdmin {
         printHeader("ROOMS AVAILABLE");
         System.out.println("Rooms for " + people + " people  (" + start + " to " + bundle.getEndDate() + ")");
         System.out.println();
-        ArrayList<Accommodation> rooms = resort.availableRooms(start, days, people);
+        ArrayList<Accommodation> rooms = resort.availableRooms(start, nights, people);
         if (rooms.isEmpty()) {
             err("No rooms that fit. Bundle abandoned - try different dates maybe.");
             return;
@@ -390,8 +392,11 @@ public class MtBullerAdmin {
         System.out.println();
         for (int i = 0; i < people.size(); i++) {
             PersonPick p = people.get(i);
-            String role = p.customer ? "customer" : "family";
-            System.out.println((i + 1) + ".  [" + p.id + "]  " + p.name + "  (" + role + ")");
+            if (p.customer) {
+                System.out.println((i + 1) + ". " + p.name + " (customer ID #" + p.id + ")");
+            } else {
+                System.out.println((i + 1) + ". " + p.name + " (family)");
+            }
         }
         System.out.println();
         return people;
