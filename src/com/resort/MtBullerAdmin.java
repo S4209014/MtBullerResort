@@ -351,6 +351,10 @@ public class MtBullerAdmin {
 
     private void saveBundles() {
         try {
+            if (resort.getBundles().isEmpty()) {
+                err("No bundles in memory to save.");
+                return;
+            }
             resort.saveToDatabase();
             ok(resort.getBundles().size() + " bundle(s) saved to the database.");
         } catch (Exception e) {
@@ -360,7 +364,13 @@ public class MtBullerAdmin {
 
     private void readBundles() {
         try {
-            resort.reloadFromDatabase();
+            int loaded = resort.reloadFromDatabase();
+            if (loaded == 0) {
+                err("Nothing in the database yet.");
+                return;
+            }
+            ok(loaded + " bundle(s) loaded from the database.");
+            System.out.println();
             listBundles();
         } catch (Exception e) {
             err("Could not read the database: " + e.getMessage());

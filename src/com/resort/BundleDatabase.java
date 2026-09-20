@@ -6,13 +6,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 public class BundleDatabase {
     private String url;
 
     public BundleDatabase(String fileName) {
         this.url = "jdbc:sqlite:" + fileName;
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("SQLite driver missing. Add sqlite-jdbc to the project libraries.");
+        }
     }
 
     public void save(ArrayList<TravelBundle> bundles) throws Exception {

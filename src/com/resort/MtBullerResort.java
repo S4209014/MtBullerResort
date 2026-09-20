@@ -4,13 +4,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class MtBullerResort {
+    public static final String DB_FILE = "bundles.db";
     private ArrayList<Accommodation> accommodations = new ArrayList<>();
     private ArrayList<Customer> customers = new ArrayList<>();
     private ArrayList<TravelBundle> bundles = new ArrayList<>();
     private int nextCustomerId = 1;
     private int nextBundleId = 1;
     private int nextFamilyId = 1;
-    private BundleDatabase database = new BundleDatabase("bundles.db");
+    private BundleDatabase database = new BundleDatabase(DB_FILE);
 
     public ArrayList<Accommodation> getAccommodations() {
         return accommodations;
@@ -39,7 +40,7 @@ public class MtBullerResort {
             accommodations.add(new Apartment("AP04", 230.00));
         }
 
-        java.io.File dbFile = new java.io.File("bundles.db");
+        java.io.File dbFile = new java.io.File(DB_FILE);
         if (dbFile.exists()) {
             try {
                 database.loadInto(this);
@@ -185,15 +186,14 @@ public class MtBullerResort {
         database.save(bundles);
     }
 
-    public void reloadFromDatabase() throws Exception {
+    public int reloadFromDatabase() throws Exception {
         for (int i = 0; i < accommodations.size(); i++) {
             accommodations.get(i).clearBookings();
         }
         bundles.clear();
-        boolean loaded = database.loadInto(this);
-        if (!loaded) {
-            System.out.println("Nothing in the database yet.");
-        }
+        database.loadInto(this);
+        seedCustomers();
         bumpIds();
+        return bundles.size();
     }
 }
