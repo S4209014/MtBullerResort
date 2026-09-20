@@ -7,17 +7,17 @@ public class TravelBundle implements Pricable {
     private int id;
     private Customer customer;
     private LocalDate startDate;
-    private int days;
+    private int nights;
     private Accommodation accommodation;
     private ArrayList<FamilyMember> family = new ArrayList<>();
     private ArrayList<LiftPass> liftPasses = new ArrayList<>();
     private ArrayList<Lesson> lessons = new ArrayList<>();
 
-    public TravelBundle(int id, Customer customer, LocalDate startDate, int days) {
+    public TravelBundle(int id, Customer customer, LocalDate startDate, int nights) {
         this.id = id;
         this.customer = customer;
         this.startDate = startDate;
-        this.days = days;
+        this.nights = nights;
     }
 
     public int getId() {
@@ -32,12 +32,12 @@ public class TravelBundle implements Pricable {
         return startDate;
     }
 
-    public int getDays() {
-        return days;
+    public int getNights() {
+        return nights;
     }
 
     public LocalDate getEndDate() {
-        return startDate.plusDays(days);
+        return startDate.plusDays(nights);
     }
 
     public Accommodation getAccommodation() {
@@ -126,7 +126,7 @@ public class TravelBundle implements Pricable {
         if (accommodation == null) {
             return 0;
         }
-        return accommodation.getPricePerNight() * days;
+        return accommodation.getPricePerNight() * nights;
     }
 
     @Override
@@ -188,8 +188,8 @@ public class TravelBundle implements Pricable {
         sb.append("Bundle #").append(id).append("\n");
         sb.append("\tCustomer: ").append(customer.getName())
                 .append("  (ID ").append(customer.getId()).append(")\n");
-        sb.append("\tDates: ").append(startDate).append("  for  ").append(days)
-                .append(" days,  ending  ").append(getEndDate()).append("\n");
+        sb.append("\tDates: ").append(startDate).append("  for  ").append(nights)
+                .append(" nights,  ending  ").append(getEndDate()).append("\n");
         sb.append("\tFamily members (").append(family.size()).append("):  ").append(familyLine()).append("\n");
         sb.append("\tAccommodation: ").append(acc).append("\n");
         sb.append("\tLift passes: ").append(passLine()).append("\n");

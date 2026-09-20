@@ -4,13 +4,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class MtBullerResort {
+    public static final String DB_FILE = "bundles.db";
     private ArrayList<Accommodation> accommodations = new ArrayList<>();
     private ArrayList<Customer> customers = new ArrayList<>();
     private ArrayList<TravelBundle> bundles = new ArrayList<>();
     private int nextCustomerId = 1;
     private int nextBundleId = 1;
     private int nextFamilyId = 1;
-    private BundleDatabase database = new BundleDatabase("bundles.db");
+    private BundleDatabase database = new BundleDatabase(DB_FILE);
 
     public ArrayList<Accommodation> getAccommodations() {
         return accommodations;
@@ -39,7 +40,7 @@ public class MtBullerResort {
             accommodations.add(new Apartment("AP04", 230.00));
         }
 
-        java.io.File dbFile = new java.io.File("bundles.db");
+        java.io.File dbFile = new java.io.File(DB_FILE);
         if (dbFile.exists()) {
             try {
                 database.loadInto(this);
@@ -51,6 +52,7 @@ public class MtBullerResort {
         // defaults if the db is missing or had no customers
         seedCustomers();
         bumpIds();
+        sortCustomers();
     }
 
     private void seedCustomers() {
@@ -105,10 +107,29 @@ public class MtBullerResort {
         }
     }
 
+    // keep the list in ID order so #4 is not sitting above Alice
+    private void sortCustomers() {
+        for (int i = 0; i < customers.size(); i++) {
+            int smallest = i;
+            for (int j = i + 1; j < customers.size(); j++) {
+                if (customers.get(j).getId() < customers.get(smallest).getId()) {
+                    smallest = j;
+                }
+            }
+            Customer swap = customers.get(i);
+            customers.set(i, customers.get(smallest));
+            customers.set(smallest, swap);
+        }
+    }
+
     public Customer addCustomer(String name, String contact, SkiLevel level) {
+        while (findCustomer(nextCustomerId) != null) {
+            nextCustomerId++;
+        }
         Customer customer = new Customer(nextCustomerId, name, contact, level);
         nextCustomerId++;
         customers.add(customer);
+        sortCustomers();
         return customer;
     }
 
@@ -156,14 +177,14 @@ public class MtBullerResort {
         return member;
     }
 
-    public TravelBundle createBundle(Customer customer, LocalDate start, int days) {
-        TravelBundle bundle = new TravelBundle(nextBundleId, customer, start, days);
+    public TravelBundle createBundle(Customer customer, LocalDate start, int nights) {
+        TravelBundle bundle = new TravelBundle(nextBundleId, customer, start, nights);
         nextBundleId++;
         return bundle;
     }
 
     public void attachRoom(TravelBundle bundle, Accommodation room) {
-        room.addBooking(bundle.getStartDate(), bundle.getDays());
+        room.addBooking(bundle.getStartDate(), bundle.getNights());
         bundle.setAccommodation(room);
         bundles.add(bundle);
     }
@@ -177,7 +198,7 @@ public class MtBullerResort {
     public void addBundleFromDb(TravelBundle bundle) {
         bundles.add(bundle);
         if (bundle.getAccommodation() != null) {
-            bundle.getAccommodation().addBooking(bundle.getStartDate(), bundle.getDays());
+            bundle.getAccommodation().addBooking(bundle.getStartDate(), bundle.getNights());
         }
     }
 
@@ -185,15 +206,15 @@ public class MtBullerResort {
         database.save(bundles);
     }
 
-    public void reloadFromDatabase() throws Exception {
+    public int reloadFromDatabase() throws Exception {
         for (int i = 0; i < accommodations.size(); i++) {
             accommodations.get(i).clearBookings();
         }
         bundles.clear();
-        boolean loaded = database.loadInto(this);
-        if (!loaded) {
-            System.out.println("Nothing in the database yet.");
-        }
+        database.loadInto(this);
+        seedCustomers();
         bumpIds();
+        sortCustomers();
+        return bundles.size();
     }
 }

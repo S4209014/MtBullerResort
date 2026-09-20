@@ -13,6 +13,11 @@ public class BundleDatabase {
 
     public BundleDatabase(String fileName) {
         this.url = "jdbc:sqlite:" + fileName;
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("SQLite driver missing. Add sqlite-jdbc to the project libraries.");
+        }
     }
 
     public void save(ArrayList<TravelBundle> bundles) throws Exception {
@@ -48,7 +53,7 @@ public class BundleDatabase {
             bundleStmt.setString(4, customer.getContact());
             bundleStmt.setString(5, customer.getLevel().name());
             bundleStmt.setString(6, bundle.getStartDate().toString());
-            bundleStmt.setInt(7, bundle.getDays());
+            bundleStmt.setInt(7, bundle.getNights());
             bundleStmt.setString(8, bundle.getAccommodation().getId());
             bundleStmt.executeUpdate();
 
