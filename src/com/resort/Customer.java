@@ -41,6 +41,6 @@ public class Customer {
     }
 
     public String shortLine() {
-        return "Customer #" + id + ": " + name + " | Contact: " + contact + " | Level: " + level;
+        return "Customer #" + id + ":  " + name + "  |  Contact: " + contact + "  |  Level: " + level;
     }
 }

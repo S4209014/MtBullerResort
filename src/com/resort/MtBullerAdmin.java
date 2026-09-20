@@ -6,6 +6,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MtBullerAdmin {
+    private static final int WIDTH = 64;
+    private static final String RESET = "\u001B[0m";
+    private static final String CYAN = "\u001B[36m";
+    private static final String GREEN = "\u001B[32m";
+    private static final String RED = "\u001B[31m";
+    private static final String YELLOW = "\u001B[33m";
+    private static final String BOLD = "\u001B[1m";
+
     private MtBullerResort resort = new MtBullerResort();
     private Scanner scanner = new Scanner(System.in);
 
@@ -15,15 +23,12 @@ public class MtBullerAdmin {
 
     private void start() {
         resort.setupDefaults();
-        System.out.println("===================================");
-        System.out.println("Welcome to the Mt Buller Custom Travel Bundle System");
-        System.out.println("====================================");
-        System.out.println();
+        printWelcome();
 
         boolean keepGoing = true;
         while (keepGoing) {
             printMenu();
-            int choice = readInt("Enter your choice (integer between 1 and 11): ", 1, 11);
+            int choice = readInt("Enter your choice (1-11): ", 1, 11);
             System.out.println();
             try {
                 if (choice == 1) {
@@ -48,35 +53,91 @@ public class MtBullerAdmin {
                     readBundles();
                 } else if (choice == 11) {
                     keepGoing = false;
-                    System.out.println("Catch you on the slopes.");
+                    ok("Catch you on the slopes.");
                 }
             } catch (DateInPastException e) {
-                System.out.println(e.getMessage());
+                err(e.getMessage());
             } catch (Exception e) {
-                System.out.println("Something went sideways: " + e.getMessage());
+                err("Something went sideways: " + e.getMessage());
             }
             System.out.println();
         }
     }
 
+    private void printWelcome() {
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println(CYAN + BOLD + fill('='));
+        System.out.println("Welcome to the Mt Buller Custom Travel Bundle System");
+        System.out.println(fill('=') + RESET);
+        System.out.println();
+    }
+
     private void printMenu() {
-        System.out.println("----------- MAIN MENU -----------");
-        System.out.println("1. Display all accomodations");
-        System.out.println("2. Display available accommodations");
-        System.out.println("3. Add customer");
-        System.out.println("4. List customers");
-        System.out.println("5. Create a bundle");
-        System.out.println("6. List bundles (with customer & family member details)");
-        System.out.println("7. Add a lift pass to a bundle");
-        System.out.println("8. Add lessons to a bundle");
-        System.out.println("9. Save bundles to a database");
-        System.out.println("10. Read bundles from database");
-        System.out.println("11. Quit");
-        System.out.println("------------------------------------");
+        printHeader("MAIN MENU");
+        System.out.println(YELLOW + " 1." + RESET + " Display all accomodations");
+        System.out.println(YELLOW + " 2." + RESET + " Display available accommodations");
+        System.out.println(YELLOW + " 3." + RESET + " Add customer");
+        System.out.println(YELLOW + " 4." + RESET + " List customers");
+        System.out.println(YELLOW + " 5." + RESET + " Create a bundle");
+        System.out.println(YELLOW + " 6." + RESET + " List bundles (customer and family)");
+        System.out.println(YELLOW + " 7." + RESET + " Add a lift pass to a bundle");
+        System.out.println(YELLOW + " 8." + RESET + " Add lessons to a bundle");
+        System.out.println(YELLOW + " 9." + RESET + " Save bundles to a database");
+        System.out.println(YELLOW + "10." + RESET + " Read bundles from database");
+        System.out.println(YELLOW + "11." + RESET + " Quit");
+        printBar();
+        System.out.println();
+    }
+
+    private void printHeader(String title) {
+        System.out.println(CYAN + labelledBar(title) + RESET);
+    }
+
+    private void printBar() {
+        System.out.println(CYAN + fill('=') + RESET);
+    }
+
+    private String fill(char c) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < WIDTH; i++) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    // =====  TITLE  =====  same width as the welcome bars
+    private String labelledBar(String title) {
+        String mid = "  " + title + "  ";
+        int leftover = WIDTH - mid.length();
+        if (leftover < 2) {
+            leftover = 2;
+        }
+        int left = leftover / 2;
+        int right = leftover - left;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < left; i++) {
+            sb.append('=');
+        }
+        sb.append(mid);
+        for (int i = 0; i < right; i++) {
+            sb.append('=');
+        }
+        return sb.toString();
+    }
+
+    private void ok(String msg) {
+        System.out.println(GREEN + msg + RESET);
+    }
+
+    private void err(String msg) {
+        System.out.println(RED + msg + RESET);
     }
 
     private void displayAllAccommodations() {
-        System.out.println("--- All Accommodations ---");
+        printHeader("ALL ACCOMMODATIONS");
+        System.out.println();
         ArrayList<Accommodation> rooms = resort.getAccommodations();
         for (int i = 0; i < rooms.size(); i++) {
             System.out.println(rooms.get(i));
@@ -84,17 +145,17 @@ public class MtBullerAdmin {
     }
 
     private void displayAvailable() {
-        LocalDate start = readStayDate(
-                "Enter the check-in date you are looking for (format yyyy-MM-dd, e.g. 2026-09-01): ",
-                false);
-        int nights = readInt("Enter the number of nights (whole number between 1 and 60): ", 1, 60);
-        int people = readInt("Total number of people (whole number between 1 and 20): ", 1, 20);
+        LocalDate start = readStayDate("Enter check-in date (yyyy-MM-dd): ", false);
+        int nights = readInt("Enter number of nights (1-60): ", 1, 60);
+        int people = readInt("Total number of people (1-20): ", 1, 20);
+        System.out.println();
         ArrayList<Accommodation> rooms = resort.availableRooms(start, nights, people);
         if (rooms.isEmpty()) {
-            System.out.println("Nothing free for that crew on those dates. Buller's a popular hill.");
+            err("Nothing free for that crew on those dates. Buller's a popular hill.");
             return;
         }
-        System.out.println("--- All Accommodations ---");
+        printHeader("AVAILABLE ACCOMMODATIONS");
+        System.out.println();
         for (int i = 0; i < rooms.size(); i++) {
             System.out.println(rooms.get(i));
         }
@@ -102,15 +163,18 @@ public class MtBullerAdmin {
 
     private void addCustomer() {
         String name = readText("Enter customer's full name: ");
-        String contact = readText("Enter customer's contact details (email or phone): ");
-        SkiLevel level = readLevel("Enter the customer's skiing level (options: 1-Beginner, 2-Intermediate, 3-Expert): ");
+        String contact = readText("Enter contact (email or phone): ");
+        SkiLevel level = readLevel("Enter ski level (1=Beginner, 2=Intermediate, 3=Expert): ");
         Customer customer = resort.addCustomer(name, contact, level);
-        System.out.println("Customer added successfully: " + customer.shortLine());
-        System.out.println("(They only hit the database later if you actually make them a bundle.)");
+        System.out.println();
+        ok("Customer added successfully:");
+        System.out.println(customer.shortLine());
+        System.out.println("(Saved to the database only if they get a bundle.)");
     }
 
     private void listCustomers() {
-        System.out.println("-- All Customers --");
+        printHeader("ALL CUSTOMERS");
+        System.out.println();
         ArrayList<Customer> list = resort.getCustomers();
         for (int i = 0; i < list.size(); i++) {
             System.out.println(list.get(i).shortLine());
@@ -118,47 +182,47 @@ public class MtBullerAdmin {
     }
 
     private void addBundle() {
-        int customerId = readInt("Enter the customer ID for this bundle (whole number between 1 and 2147483647): ",
-                1, Integer.MAX_VALUE);
+        int customerId = readInt("Enter customer ID: ", 1, Integer.MAX_VALUE);
         Customer customer = resort.findCustomer(customerId);
         if (customer == null) {
-            System.out.println("No customer with that ID. Try listing them first.");
+            err("No customer with that ID. Try listing them first.");
             return;
         }
 
-        LocalDate start = readStayDate(
-                "Enter the bundle start date (format yyyy-MM-dd, e.g. 2026-09-01): ", true);
-        int days = readInt("Enter the duration of the stay in days (whole number between 1 and 60): ", 1, 60);
-        int familyCount = readInt(
-                "Enter the number of family members joining this bundle (max 5) (whole number between 0 and 5): ",
-                0, 5);
+        System.out.println();
+        LocalDate start = readStayDate("Enter start date (yyyy-MM-dd): ", true);
+        int days = readInt("Enter stay length in days (1-60): ", 1, 60);
+        int familyCount = readInt("How many family members? (0-5): ", 0, 5);
 
         TravelBundle bundle = resort.createBundle(customer, start, days);
         for (int i = 1; i <= familyCount; i++) {
-            System.out.println("Details for family member " + i + " of " + familyCount + ":");
-            String fname = readText("Enter family member's name: ");
-            SkiLevel level = readLevel("Enter family member's skiing level (options: 1-Beginner, 2-Intermediate, 3-Expert): ");
+            System.out.println();
+            System.out.println("Family member " + i + " of " + familyCount);
+            String fname = readText("Enter name: ");
+            SkiLevel level = readLevel("Enter ski level (1=Beginner, 2=Intermediate, 3=Expert): ");
             FamilyMember member = resort.makeFamilyMember(fname, level);
             bundle.addFamilyMember(member);
             customer.addFamilyMember(member);
         }
 
         int people = bundle.partySize();
-        System.out.println("Accommodations available for " + people + " people ("
-                + start + " to " + bundle.getEndDate() + ")");
+        printHeader("ROOMS AVAILABLE");
+        System.out.println("Rooms for " + people + " people  (" + start + " to " + bundle.getEndDate() + ")");
+        System.out.println();
         ArrayList<Accommodation> rooms = resort.availableRooms(start, days, people);
         if (rooms.isEmpty()) {
-            System.out.println("No rooms that fit. Bundle abandoned - try different dates maybe.");
+            err("No rooms that fit. Bundle abandoned - try different dates maybe.");
             return;
         }
         for (int i = 0; i < rooms.size(); i++) {
             System.out.println(rooms.get(i));
         }
+        System.out.println();
 
-        String accId = readText("Enter the ID of the accommodation to book: (e.g AP01) ");
+        String accId = readText("Enter accommodation ID (e.g. AP01): ");
         Accommodation room = resort.findAccommodation(accId);
         if (room == null) {
-            System.out.println("That ID isn't in the list.");
+            err("That ID isn't in the list.");
             return;
         }
         boolean listed = false;
@@ -168,21 +232,24 @@ public class MtBullerAdmin {
             }
         }
         if (!listed) {
-            System.out.println("That place isn't available for this stay.");
+            err("That place isn't available for this stay.");
             return;
         }
 
         resort.attachRoom(bundle, room);
-        System.out.println("Accommodation " + room.getId() + " has been attached to the bundle");
-        System.out.println("Bundle created successfully");
+        System.out.println();
+        ok("Accommodation " + room.getId() + " has been attached to the bundle.");
+        ok("Bundle created successfully.");
+        System.out.println();
         System.out.println(bundle.prettyPrint());
     }
 
     private void listBundles() {
-        System.out.println("-- All Travel Bundles --");
+        printHeader("ALL TRAVEL BUNDLES");
+        System.out.println();
         ArrayList<TravelBundle> list = resort.getBundles();
         if (list.isEmpty()) {
-            System.out.println("No bundles yet. Go make one, it's why we're here.");
+            err("No bundles yet. Go make one, it's why we're here.");
             return;
         }
         for (int i = 0; i < list.size(); i++) {
@@ -193,24 +260,26 @@ public class MtBullerAdmin {
 
     private void addLiftPass() {
         if (resort.getBundles().isEmpty()) {
-            System.out.println("No bundles to decorate with lift passes.");
+            err("No bundles to decorate with lift passes.");
             return;
         }
         listBundles();
         int bundleId = readInt("Enter the bundle ID: ", 1, Integer.MAX_VALUE);
         TravelBundle bundle = resort.findBundle(bundleId);
         if (bundle == null) {
-            System.out.println("Can't find that bundle.");
+            err("Can't find that bundle.");
             return;
         }
 
         ArrayList<PersonPick> people = listPeople(bundle);
-        int pick = readInt("Select the person (whole number between 1 and " + people.size() + "): ",
-                1, people.size());
+        int pick = readInt("Select person (1-" + people.size() + "): ", 1, people.size());
         PersonPick person = people.get(pick - 1);
 
-        System.out.println("Choose lift pass type: 1-Day pass(es) at $26.00/day, 2-Season pass (30 days) at $200.00 flat");
-        int typeChoice = readInt("Enter your choice: ", 1, 2);
+        System.out.println();
+        System.out.println("Lift pass type:");
+        System.out.println("  1 = Day pass  ($26.00/day)");
+        System.out.println("  2 = Season pass  ($200.00 for 30 days)");
+        int typeChoice = readInt("Enter your choice (1-2): ", 1, 2);
 
         LiftPass existing = bundle.findPass(person.id, person.customer);
         if (typeChoice == 2) {
@@ -222,13 +291,13 @@ public class MtBullerAdmin {
                 existing.setDays(30);
             }
         } else {
-            int extra = readInt("Enter the number of day-passes to buy for " + person.name + ": ", 1, 60);
+            int extra = readInt("Day passes for " + person.name + " (1-60): ", 1, 60);
             double rawCost = extra * LiftPass.DAY_PRICE;
             if (existing != null && existing.getType() == LiftPassType.DAY) {
                 rawCost = (existing.getDays() + extra) * LiftPass.DAY_PRICE;
             }
             if (rawCost >= 180) {
-                System.out.println("Heads up: that's getting near (or over) the $200 season pass. Might be nicer value.");
+                System.out.println("Heads up: that's close to the $200 season pass. Might be better value.");
             }
 
             if (existing == null) {
@@ -243,30 +312,29 @@ public class MtBullerAdmin {
             }
         }
 
-        System.out.println("Lift pass added. Bundle lift pass total is now $"
+        ok("Lift pass added. Bundle lift pass total is now $"
                 + String.format("%.2f", bundle.getLiftPassTotal()));
     }
 
     private void addLessons() {
         if (resort.getBundles().isEmpty()) {
-            System.out.println("No bundles yet, so no one to teach.");
+            err("No bundles yet, so no one to teach.");
             return;
         }
         int bundleId = readInt("Enter the bundle ID: ", 1, Integer.MAX_VALUE);
         TravelBundle bundle = resort.findBundle(bundleId);
         if (bundle == null) {
-            System.out.println("Can't find that bundle.");
+            err("Can't find that bundle.");
             return;
         }
 
         ArrayList<PersonPick> people = listPeople(bundle);
-        int pick = readInt("Select the person (whole number between 1 and " + people.size() + "): ",
-                1, people.size());
+        int pick = readInt("Select person (1-" + people.size() + "): ", 1, people.size());
         PersonPick person = people.get(pick - 1);
 
-        int count = readInt("Enter the number of lessons for " + person.name + " (level: "
-                + person.level + ", $" + person.level.getLessonPrice()
-                + " each) (whole number between 0 and 30): ", 0, 30);
+        System.out.println();
+        int count = readInt("Lessons for " + person.name + "  (" + person.level + ", $"
+                + String.format("%.2f", person.level.getLessonPrice()) + " each)  (0-30): ", 0, 30);
 
         Lesson existing = bundle.findLesson(person.id, person.customer);
         if (existing == null) {
@@ -276,16 +344,16 @@ public class MtBullerAdmin {
             existing.addCount(count);
         }
 
-        System.out.println("Lessons added. Bundle lesson total is now $"
+        ok("Lessons added. Bundle lesson total is now $"
                 + String.format("%.2f", bundle.getLessonTotal()));
     }
 
     private void saveBundles() {
         try {
             resort.saveToDatabase();
-            System.out.println(resort.getBundles().size() + " bundle(s) saved to the database.");
+            ok(resort.getBundles().size() + " bundle(s) saved to the database.");
         } catch (Exception e) {
-            System.out.println("Could not save: " + e.getMessage());
+            err("Could not save: " + e.getMessage());
         }
     }
 
@@ -294,7 +362,7 @@ public class MtBullerAdmin {
             resort.reloadFromDatabase();
             listBundles();
         } catch (Exception e) {
-            System.out.println("Could not read the database: " + e.getMessage());
+            err("Could not read the database: " + e.getMessage());
         }
     }
 
@@ -306,12 +374,15 @@ public class MtBullerAdmin {
             FamilyMember member = bundle.getFamily().get(i);
             people.add(new PersonPick(member.getId(), false, member.getName(), member.getLevel()));
         }
+        System.out.println();
         System.out.println("People in this bundle:");
+        System.out.println();
         for (int i = 0; i < people.size(); i++) {
             PersonPick p = people.get(i);
-            String role = p.customer ? "customer" : "family member";
-            System.out.println((i + 1) + ". [" + p.id + "] " + p.name + " (" + role + ")");
+            String role = p.customer ? "customer" : "family";
+            System.out.println((i + 1) + ".  [" + p.id + "]  " + p.name + "  (" + role + ")");
         }
+        System.out.println();
         return people;
     }
 
@@ -332,7 +403,7 @@ public class MtBullerAdmin {
             } catch (DateInPastException e) {
                 System.out.println(e.getMessage());
             } catch (DateTimeParseException e) {
-                System.out.println("That doesn't look like yyyy-MM-dd. Example: 2026-09-01");
+                System.out.println("Use yyyy-MM-dd  (e.g. 2026-09-01)");
             }
         }
     }
@@ -366,7 +437,7 @@ public class MtBullerAdmin {
             try {
                 int value = Integer.parseInt(line);
                 if (value < min || value > max) {
-                    System.out.println("Please enter a whole number between " + min + " and " + max + ".");
+                    System.out.println("Please enter a number from " + min + " to " + max + ".");
                 } else {
                     return value;
                 }

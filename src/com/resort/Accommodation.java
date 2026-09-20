@@ -65,7 +65,7 @@ public abstract class Accommodation implements Pricable {
 
     @Override
     public String toString() {
-        return String.format("[%s] %s - Capacity: %d - $%.2f/night",
+        return String.format("[%s]  %s  -  Capacity: %d  -  $%.2f/night",
                 id, label, capacity, pricePerNight);
     }
 }
