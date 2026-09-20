@@ -6,9 +6,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MtBullerAdmin {
-    private static final int WIDTH = 64;
+    private static final String WELCOME = "Welcome to the Mt Buller Custom Travel Bundle System";
+    private static final int WIDTH = WELCOME.length();
     private static final String RESET = "\u001B[0m";
-    private static final String CYAN = "\u001B[36m";
+    private static final String WHITE = "\u001B[97m";
     private static final String GREEN = "\u001B[32m";
     private static final String RED = "\u001B[31m";
     private static final String YELLOW = "\u001B[33m";
@@ -68,8 +69,8 @@ public class MtBullerAdmin {
         System.out.println();
         System.out.println();
         System.out.println();
-        System.out.println(CYAN + BOLD + fill('='));
-        System.out.println("Welcome to the Mt Buller Custom Travel Bundle System");
+        System.out.println(WHITE + BOLD + fill('='));
+        System.out.println(WELCOME);
         System.out.println(fill('=') + RESET);
         System.out.println();
     }
@@ -92,11 +93,11 @@ public class MtBullerAdmin {
     }
 
     private void printHeader(String title) {
-        System.out.println(CYAN + labelledBar(title) + RESET);
+        System.out.println(WHITE + labelledBar(title) + RESET);
     }
 
     private void printBar() {
-        System.out.println(CYAN + fill('=') + RESET);
+        System.out.println(WHITE + fill('=') + RESET);
     }
 
     private String fill(char c) {
