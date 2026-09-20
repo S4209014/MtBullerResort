@@ -29,4 +29,4 @@
 | Save + read | Menu 9 then 10 | bundles.db then same bundles printed | Reloaded pretty print | Pass |
 | Date 3 years ahead | Bundle start too far | 2 year limit message | Not accepted | Pass |
 
-Re-run with `compile-and-run.bat` (JDK on PATH) or IntelliJ. Date examples use yyyy-MM-dd.
+Re-run from IntelliJ (main class `com.resort.MtBullerAdmin`). Date examples use yyyy-MM-dd.

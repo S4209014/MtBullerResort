@@ -283,7 +283,7 @@ public class MtBullerAdmin {
     private void saveBundles() {
         try {
             resort.saveToDatabase();
-            System.out.println("Bundles saved to the database.");
+            System.out.println(resort.getBundles().size() + " bundle(s) saved to the database.");
         } catch (Exception e) {
             System.out.println("Could not save: " + e.getMessage());
         }
