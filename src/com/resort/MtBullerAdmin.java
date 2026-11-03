@@ -32,29 +32,21 @@ public class MtBullerAdmin {
             int choice = readInt("Enter your choice (1-11): ", 1, 11);
             System.out.println();
             try {
-                if (choice == 1) {
-                    displayAllAccommodations();
-                } else if (choice == 2) {
-                    displayAvailable();
-                } else if (choice == 3) {
-                    addCustomer();
-                } else if (choice == 4) {
-                    listCustomers();
-                } else if (choice == 5) {
-                    addBundle();
-                } else if (choice == 6) {
-                    listBundles();
-                } else if (choice == 7) {
-                    addLiftPass();
-                } else if (choice == 8) {
-                    addLessons();
-                } else if (choice == 9) {
-                    saveBundles();
-                } else if (choice == 10) {
-                    readBundles();
-                } else if (choice == 11) {
-                    keepGoing = false;
-                    ok("Catch you on the slopes.");
+                switch (choice) {
+                    case 1 -> displayAllAccommodations();
+                    case 2 -> displayAvailable();
+                    case 3 -> addCustomer();
+                    case 4 -> listCustomers();
+                    case 5 -> addBundle();
+                    case 6 -> listBundles();
+                    case 7 -> addLiftPass();
+                    case 8 -> addLessons();
+                    case 9 -> saveBundles();
+                    case 10 -> readBundles();
+                    case 11 -> {
+                        keepGoing = false;
+                        ok("Catch you on the slopes.");
+                    }
                 }
             } catch (DateInPastException e) {
                 err(e.getMessage());
