@@ -9,15 +9,27 @@ public class ResortGUI extends JFrame implements ActionListener {
     private final JMenuBar menuBar = new JMenuBar();
     private final ArrayList<JMenuItem> menuItems = new ArrayList<>();
 
+    private final WelcomePanel welcomePanel = new WelcomePanel();
+    private final AccommodationPanel accommodationPanel = new AccommodationPanel();
+    private final CustomersPanel customersPanel = new CustomersPanel();
+    private final CreateBundlePanel createBundlePanel = new CreateBundlePanel();
+    private final BundlesPanel bundlesPanel = new BundlesPanel();
+
+    private final JTabbedPane tabbedPane = new JTabbedPane();
+
+    private final JLabel statusLabel = new JLabel("");
+
     public ResortGUI() {
         this.setTitle("Mt Buller Resort - Booking Manager");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1000, 680);
-        this.setLayout(new FlowLayout());
+        this.setLayout(new BorderLayout());
         this.setLocationRelativeTo(null);
 
         //------ All init functions ------//
-        this.createMenuBar();
+        createMenuBar();
+        tabManager();
+        createStatusLabel();
 
         //------ Always set visible last ------//
         this.setVisible(true);
@@ -52,6 +64,26 @@ public class ResortGUI extends JFrame implements ActionListener {
 
         menuItems.add(MenuItem.HOW_TO_USE.ordinal(), howToUse);
         menuItems.add(MenuItem.ABOUT.ordinal(), about);
+    }
+
+    private void tabManager() {
+        tabbedPane.addTab("Accommodations", accommodationPanel.getPanel());
+        tabbedPane.addTab("Customers", customersPanel.getPanel());
+        tabbedPane.addTab("Create Bundle", createBundlePanel.getPanel());
+        tabbedPane.addTab("Bundles", bundlesPanel.getPanel());
+
+        this.add(tabbedPane);
+    }
+
+    private void createStatusLabel() {
+        setStatusText("Testing...");
+
+        this.add(statusLabel, BorderLayout.SOUTH);
+    }
+
+    public String setStatusText(String statusText) {
+        this.statusLabel.setText(statusText);
+        return statusLabel.getText();
     }
 
     @Override
