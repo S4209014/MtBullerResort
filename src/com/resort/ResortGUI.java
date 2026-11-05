@@ -39,11 +39,13 @@ public class ResortGUI extends JFrame implements ActionListener {
      * @see GridBagConstraints
      */
     public ResortGUI() {
+        // Standard GUI configuration
         this.setTitle("Mt Buller Resort - Booking Manager");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1000, 680);
         this.setLayout(new GridBagLayout());
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null); // Spawns window in the middle of the screen
+        this.setMinimumSize(new Dimension(800, 600));
 
         //------ All init functions ------//
         createMenuBar();
@@ -94,24 +96,36 @@ public class ResortGUI extends JFrame implements ActionListener {
     }
 
     /**
-     * Instantiates and initialises all the tabbed panes in the navigation of the program.
+     * Instantiates and adds all the tabbed panes in the navigation of the program.
      */
     private void tabManager() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0; gbc.gridy = 0 ;
+        gbc.weightx = 1.0; gbc.weighty = 1.0;
+        gbc.insets = new Insets(4, 8, 2, 8); // top, left, bottom, right
+
         tabbedPane.addTab("Accommodations", accommodationPanel.getPanel());
         tabbedPane.addTab("Customers", customersPanel.getPanel());
         tabbedPane.addTab("Create Bundle", createBundlePanel.getPanel());
         tabbedPane.addTab("Bundles", bundlesPanel.getPanel());
 
-        this.add(tabbedPane);
+        this.add(tabbedPane, gbc);
     }
 
     /**
      * This program initialises a permanent status label at the bottom of program that displays the latest action.
      */
     private void createStatusLabel() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.insets = new Insets(2, 4, 4, 4);
+        gbc.ipadx = 4;
+        gbc.ipady = 4;
         setStatusText("Testing...");
 
-        this.add(statusLabel);
+        this.add(statusLabel, gbc);
     }
 
     /**
