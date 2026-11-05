@@ -1,0 +1,38 @@
+name: Java Build
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: Set up JDK
+      uses: actions/setup-java@v6
+      with:
+        java-version: '25'
+        distribution: 'microsoft'
+
+    - name: Compile Java Code
+      run: |
+        mkdir -p out
+        javac -d out $(find src -name "*.java")
+
+    - name: Package JAR File
+      run: |
+        jar cfe app.jar com.resort.ResortGUI -C out .
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: java-application
+        path: app.jar
