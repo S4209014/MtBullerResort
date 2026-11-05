@@ -4,10 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class WelcomePanel extends ResortPanel {
     private final JButton enterButton = new JButton("Enter");
     private ActionListener enterButtonListener;
+    private final ImageIcon logo = new ImageIcon(
+            Objects.requireNonNull(WelcomePanel.class.getResource("/assets/MtBullerResort_Logo.png")));
 
     WelcomePanel() {
         super("Welcome");
@@ -16,7 +19,9 @@ public class WelcomePanel extends ResortPanel {
 
     @Override
     protected void createComponents() {
-        JLabel titleLabel = new JLabel("Welcome to Mt Buller Resort");
+        JLabel titleLabel = new JLabel("Welcome to Mt Buller Resort", logo, SwingConstants.CENTER);
+        titleLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+        titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         JLabel descriptionLabel = new JLabel("Create custom travel bundles for customers and their families");
 
         // Add listener to button
@@ -26,6 +31,7 @@ public class WelcomePanel extends ResortPanel {
             }
         });
 
+        // Positioning and constraints, adding to Panel
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
