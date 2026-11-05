@@ -34,6 +34,8 @@ public class ResortGUI extends JFrame implements ActionListener {
 
     private final JLabel statusLabel = new JLabel("");
 
+    private static Color primaryColour = new Color(0x1d2e52);
+
     /**
      * Running this function will create a window and initialise all functions for the program to be interacted with.
      * <p>
@@ -58,6 +60,7 @@ public class ResortGUI extends JFrame implements ActionListener {
         //------ Always set visible last ------//
         this.setVisible(true);
     }
+
 
     /**
      * Creates, initialises and manages all menu items across the program.
@@ -193,6 +196,10 @@ public class ResortGUI extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+    }
+
+    public static Color getPrimaryColour() {
+        return primaryColour;
     }
 
     public static void main(String[] args) {
