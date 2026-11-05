@@ -3,7 +3,6 @@ package com.resort;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.EnumMap;
 
 /**
@@ -105,12 +104,48 @@ public class ResortGUI extends JFrame implements ActionListener {
         gbc.weightx = 1.0; gbc.weighty = 1.0;
         gbc.insets = new Insets(4, 8, 2, 8); // top, left, bottom, right
 
-        tabbedPane.addTab("Accommodations", accommodationPanel.getPanel());
-        tabbedPane.addTab("Customers", customersPanel.getPanel());
-        tabbedPane.addTab("Create Bundle", createBundlePanel.getPanel());
-        tabbedPane.addTab("Bundles", bundlesPanel.getPanel());
+        tabbedPane.addTab("Accommodation", createWelcomeScreen());
+        tabbedPane.addTab("Customers", customersPanel);
+        tabbedPane.addTab("Create Bundle", createBundlePanel);
+        tabbedPane.addTab("Bundles", bundlesPanel);
+
+        // Disable the 3 tabs until the welcome screen is clicked
+        int[] enabledTabbedPaneIndex = new int[]{1, 2, 3};
+        boolean[] enabledTabbedPanes = new boolean[]{false, false, false};
+        setTabEnabled(enabledTabbedPaneIndex, enabledTabbedPanes);
 
         this.add(tabbedPane, gbc);
+    }
+
+    private void setTabEnabled(int[] index, boolean[] enabled) {
+        for (int i=0; i < index.length; i++) {
+            tabbedPane.setEnabledAt(index[i], enabled[i]);
+        }
+    }
+
+    /**
+     * This method creates a cardLayout to display the welcome screen on top of the accommodations panel
+     */
+    private JPanel createWelcomeScreen() {
+        CardLayout cardLayout = new CardLayout();
+        JPanel cardPanel = new JPanel(cardLayout);
+
+        cardPanel.add(welcomePanel, String.valueOf(ResortPanelType.WELCOME));
+        cardPanel.add(accommodationPanel, String.valueOf(ResortPanelType.ACCOMMODATION));
+
+        // Add listener for welcome button
+        welcomePanel.addEnterButtonListener(e -> welcomeButtonPressed(cardLayout, cardPanel));
+
+        return cardPanel;
+    }
+
+    private void welcomeButtonPressed(CardLayout cardLayout, JPanel cardPanel) {
+        cardLayout.show(cardPanel, ResortPanelType.ACCOMMODATION.name());
+
+        // Re-enable tabs
+        int[] tabsIndex = {1, 2, 3}; // Customers, Create Bundle, Bundles
+        boolean[] tabsEnabled = {true, true, true}; // Enable all tabs;
+        setTabEnabled(tabsIndex, tabsEnabled);
     }
 
     /**

@@ -1,19 +1,19 @@
 package com.resort;
 
 import javax.swing.*;
+import java.awt.*;
 
-public abstract class ResortPanel {
-    private final JPanel panel = new JPanel();
-    private String name;
+public abstract class ResortPanel extends JPanel {
+    protected String name;
 
     ResortPanel(String name) {
-        JLabel label = new JLabel();
-        label.setText(name);
-
-        panel.add(label);
+        this.name = name;
+        this.setLayout(new GridBagLayout());
     }
 
-    public JPanel getPanel() {
-        return this.panel;
+    protected abstract void createComponents();
+
+    public String getName() {
+        return this.name;
     }
 }
