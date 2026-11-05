@@ -14,6 +14,10 @@ import java.util.EnumMap;
  * <p>
  *     It is effectively a manager, a child of {@link JFrame} and implementing {@link ActionListener}.
  * </p>
+ * <p>
+ *     This class implements the Layout Manager: {@link GridBagLayout}
+ * </p>
+ * @see GridBagConstraints
  * @author BrodieCousins
  */
 public class ResortGUI extends JFrame implements ActionListener {
@@ -117,6 +121,13 @@ public class ResortGUI extends JFrame implements ActionListener {
         this.add(tabbedPane, gbc);
     }
 
+    /**
+     * This method allows you to set which tabs in tabbedPane are enabled vs disabled.
+     * <p>
+     * </p>
+     * @param index Specifies which index's of tabbedPane to edit / redefine
+     * @param enabled Matching the order of the index array, true enables the tab to be clicked false disables
+     */
     private void setTabEnabled(int[] index, boolean[] enabled) {
         for (int i=0; i < index.length; i++) {
             tabbedPane.setEnabledAt(index[i], enabled[i]);
@@ -124,7 +135,7 @@ public class ResortGUI extends JFrame implements ActionListener {
     }
 
     /**
-     * This method creates a cardLayout to display the welcome screen on top of the accommodations panel
+     * This method creates a cardLayout to display and remove the welcome screen on top of the accommodations panel
      */
     private JPanel createWelcomeScreen() {
         CardLayout cardLayout = new CardLayout();
@@ -139,6 +150,11 @@ public class ResortGUI extends JFrame implements ActionListener {
         return cardPanel;
     }
 
+    /**
+     * This method is called when the welcomeButton on the welcomeScreen is pressed
+     * @param cardLayout
+     * @param cardPanel
+     */
     private void welcomeButtonPressed(CardLayout cardLayout, JPanel cardPanel) {
         cardLayout.show(cardPanel, ResortPanelType.ACCOMMODATION.name());
 
@@ -153,7 +169,8 @@ public class ResortGUI extends JFrame implements ActionListener {
      */
     private void createStatusLabel() {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         gbc.gridx = 0; gbc.gridy = 1;
         gbc.insets = new Insets(2, 4, 4, 4);
         gbc.ipadx = 4;
