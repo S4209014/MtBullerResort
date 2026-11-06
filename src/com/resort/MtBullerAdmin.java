@@ -142,7 +142,7 @@ public class MtBullerAdmin {
         int nights = readInt("Enter number of nights (1-60): ", 1, 60);
         int people = readInt("Total number of people (1-20): ", 1, 20);
         System.out.println();
-        ArrayList<Accommodation> rooms = resort.availableRooms(start, nights, people);
+        ArrayList<Accommodation> rooms = resort.getAvailableRooms(start, nights, people);
         if (rooms.isEmpty()) {
             err("Nothing free for that crew on those dates. Buller's a popular hill.");
             return;
@@ -204,7 +204,7 @@ public class MtBullerAdmin {
         printHeader("ROOMS AVAILABLE");
         System.out.println("Rooms for " + people + " people  (" + start + " to " + bundle.getEndDate() + ")");
         System.out.println();
-        ArrayList<Accommodation> rooms = resort.availableRooms(start, nights, people);
+        ArrayList<Accommodation> rooms = resort.getAvailableRooms(start, nights, people);
         if (rooms.isEmpty()) {
             err("No rooms that fit. Bundle abandoned - try different dates maybe.");
             return;

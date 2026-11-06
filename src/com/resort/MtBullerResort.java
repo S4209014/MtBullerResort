@@ -160,7 +160,7 @@ public class MtBullerResort {
         return null;
     }
 
-    public ArrayList<Accommodation> availableRooms(LocalDate start, int nights, int people) {
+    public ArrayList<Accommodation> getAvailableRooms(LocalDate start, int nights, int people) {
         ArrayList<Accommodation> result = new ArrayList<>();
         for (int i = 0; i < accommodations.size(); i++) {
             Accommodation room = accommodations.get(i);

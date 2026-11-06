@@ -2,8 +2,8 @@ package com.resort;
 
 public class CreateBundlePanel extends ResortPanel {
 
-    CreateBundlePanel() {
-        super("Create Bundle");
+    CreateBundlePanel(MtBullerResort resort) {
+        super("Create Bundle", resort);
     }
 
     @Override

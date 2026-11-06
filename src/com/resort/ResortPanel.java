@@ -5,9 +5,11 @@ import java.awt.*;
 
 public abstract class ResortPanel extends JPanel {
     protected String name;
+    protected MtBullerResort resort;
 
-    ResortPanel(String name) {
+    ResortPanel(String name, MtBullerResort resort) {
         this.name = name;
+        this.resort = resort;
         this.setLayout(new GridBagLayout());
     }
 

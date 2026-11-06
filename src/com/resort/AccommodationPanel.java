@@ -1,17 +1,24 @@
 package com.resort;
 
+import javax.sound.midi.SoundbankResource;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.DateFormatter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 
-public class AccommodationPanel extends ResortPanel {
-    private final JPanel filterPanel = new JPanel(new GridBagLayout());
-    private final JScrollPane resultsPanel = new JScrollPane();
+public class AccommodationPanel extends ResortPanel implements ActionListener {
+    private final JTextArea resultsText = new JTextArea();
+    private final JScrollPane resultsPanel = new JScrollPane(resultsText);
 
-    private final String[] accommodationTypes = {"Hotel Room", "Apartment", "Lodge Room"};
+    private final JPanel filterPanel = new JPanel(new GridBagLayout());
+
+    private final String[] accommodationTypes = {"All Types", "Hotel Room", "Apartment", "Lodge Room"};
     private final JComboBox<String> typeDropdown = new JComboBox<>(accommodationTypes);
     private final JFormattedTextField checkInDate = new JFormattedTextField(dateFormatter());
     private final JSpinner numNightsSpinner = new JSpinner();
@@ -20,8 +27,8 @@ public class AccommodationPanel extends ResortPanel {
     private final JButton showAll = new JButton("Show All");
     private final JButton showAvailable = new JButton("Show Available");
 
-    AccommodationPanel() {
-        super("Accommodation");
+    AccommodationPanel(MtBullerResort resort) {
+        super("Accommodation", resort);
         createComponents();
     }
 
@@ -56,7 +63,7 @@ public class AccommodationPanel extends ResortPanel {
         TitledBorder titledBorder = new TitledBorder("Filter");
         titledBorder.setTitleFont(Font.getFont(Font.SANS_SERIF));
         titledBorder.setTitleColor(ResortGUI.getPrimaryColour());
-        filterPanel.setBorder(new TitledBorder("Filter"));
+        filterPanel.setBorder(titledBorder);
 
         JLabel typeLabel = new JLabel("Type");
         filterPanel.add(typeLabel, gbc);
@@ -65,7 +72,7 @@ public class AccommodationPanel extends ResortPanel {
         filterPanel.add(typeDropdown, gbc);
 
         gbc.gridx = 2;
-        JLabel checkInDateLabel = new JLabel("<html>Check in date<br>(dd/mm/yy)</html>");
+        JLabel checkInDateLabel = new JLabel("<html>Check in date<br>(yyyy-mm-dd)</html>");
         filterPanel.add(checkInDateLabel, gbc);
 
         gbc.gridx = 3;
@@ -99,8 +106,11 @@ public class AccommodationPanel extends ResortPanel {
         filterPanel.add(showAll, gbc);
 
         gbc.gridx = 7;
+        showAvailable.addActionListener(this);
         filterPanel.add(showAvailable, gbc);
 
+        resultsText.setLineWrap(true);
+        resultsText.setWrapStyleWord(true);
     }
 
     private DateFormatter dateFormatter() {
@@ -111,5 +121,42 @@ public class AccommodationPanel extends ResortPanel {
         DateFormatter dateFormatter = new DateFormatter(dateFormat);
         dateFormatter.setCommitsOnValidEdit(true);
         return dateFormatter;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == this.showAvailable) {
+            onAvailableButton();
+        }
+    }
+
+    private void onAvailableButton() {
+        this.resultsText.setText("");
+        LocalDate date = LocalDate.parse(this.checkInDate.getText());
+        int nights = (int) this.numNightsSpinner.getValue();
+        int people = (int) this.numGuestsSpinner.getValue();
+
+        ArrayList<Accommodation> rooms = resort.getAvailableRooms(date, nights, people);
+
+        for (Accommodation room : rooms) {
+            switch (this.typeDropdown.getSelectedItem().toString()) {
+                case "All Types" -> this.resultsText.append(room + "\n");
+                case "Hotel Room" -> {
+                    if (room instanceof HotelRoom) {
+                        this.resultsText.append(room + "\n");
+                    }
+                }
+                case "Apartment" -> {
+                    if (room instanceof Apartment) {
+                        this.resultsText.append(room + "\n");
+                    }
+                }
+                case "Lodge Room" -> {
+                    if (room instanceof LodgeRoom) {
+                        this.resultsText.append(room + "\n");
+                    }
+                }
+            }
+        }
     }
 }

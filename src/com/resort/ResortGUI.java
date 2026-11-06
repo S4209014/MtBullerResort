@@ -21,16 +21,18 @@ import java.util.EnumMap;
  * @author BrodieCousins
  */
 public class ResortGUI extends JFrame {
+    private final MtBullerResort resort = new MtBullerResort();
+
     private final JMenuBar menuBar = new JMenuBar();
     private final EnumMap<MenuAction, JMenuItem> menuItems = new EnumMap<>(MenuAction.class);
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
 
-    private final WelcomePanel welcomePanel = new WelcomePanel();
-    private final AccommodationPanel accommodationPanel = new AccommodationPanel();
-    private final CustomersPanel customersPanel = new CustomersPanel();
-    private final CreateBundlePanel createBundlePanel = new CreateBundlePanel();
-    private final BundlesPanel bundlesPanel = new BundlesPanel();
+    private final WelcomePanel welcomePanel = new WelcomePanel(resort);
+    private final AccommodationPanel accommodationPanel = new AccommodationPanel(resort);
+    private final CustomersPanel customersPanel = new CustomersPanel(resort);
+    private final CreateBundlePanel createBundlePanel = new CreateBundlePanel(resort);
+    private final BundlesPanel bundlesPanel = new BundlesPanel(resort);
 
     private final JLabel statusLabel = new JLabel("");
 
@@ -44,6 +46,7 @@ public class ResortGUI extends JFrame {
      * @see GridBagConstraints
      */
     public ResortGUI() {
+        resort.setupDefaults();
         // Standard GUI configuration
         this.setTitle("Mt Buller Resort - Booking Manager");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
