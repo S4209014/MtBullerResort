@@ -39,6 +39,7 @@ public class WelcomePanel extends ResortPanel {
         enterButton.setForeground(Color.WHITE);
         enterButton.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
         enterButton.setBorderPainted(false);
+        enterButton.setOpaque(true);
         enterButton.setHorizontalAlignment(SwingConstants.CENTER);
         enterButton.setPreferredSize(new Dimension(180, 35));
         enterButton.addActionListener(e -> {

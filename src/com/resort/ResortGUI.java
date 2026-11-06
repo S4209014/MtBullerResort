@@ -20,7 +20,7 @@ import java.util.EnumMap;
  * @see GridBagConstraints
  * @author BrodieCousins
  */
-public class ResortGUI extends JFrame implements ActionListener {
+public class ResortGUI extends JFrame {
     private final JMenuBar menuBar = new JMenuBar();
     private final EnumMap<MenuAction, JMenuItem> menuItems = new EnumMap<>(MenuAction.class);
 
@@ -34,7 +34,7 @@ public class ResortGUI extends JFrame implements ActionListener {
 
     private final JLabel statusLabel = new JLabel("");
 
-    private static Color primaryColour = new Color(0x1d2e52);
+    private static final Color primaryColour = new Color(0x1d2e52);
 
     /**
      * Running this function will create a window and initialise all functions for the program to be interacted with.
@@ -192,10 +192,6 @@ public class ResortGUI extends JFrame implements ActionListener {
      */
     public void setStatusText(String statusText) {
         this.statusLabel.setText(statusText);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
     }
 
     public static Color getPrimaryColour() {

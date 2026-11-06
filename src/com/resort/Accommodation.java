@@ -4,11 +4,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public abstract class Accommodation implements Pricable {
-    private String id;
-    private String label;
-    private int capacity;
-    private double pricePerNight;
-    private ArrayList<Booking> bookings = new ArrayList<>();
+    private final String id;
+    private final String label;
+    private final int capacity;
+    private final double pricePerNight;
+    private final ArrayList<Booking> bookings = new ArrayList<>();
 
     public Accommodation(String id, String label, int capacity, double pricePerNight) {
         this.id = id;
