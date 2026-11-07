@@ -10,7 +10,7 @@ import java.io.UncheckedIOException;
 import java.util.Objects;
 
 public class WelcomePanel extends ResortPanel {
-    private final JButton enterButton = new JButton("Enter");
+    private final JButton enterButton = new PrimaryButton("Enter");
     private ActionListener enterButtonListener;
     private final ImageIcon logo = loadLogo("/assets/MtBullerResort_Logo.png", 150);
 
@@ -35,13 +35,6 @@ public class WelcomePanel extends ResortPanel {
         descriptionLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // ---- Enter button formatting ---- //
-        enterButton.setBackground(ResortGUI.getPrimaryColour());
-        enterButton.setForeground(Color.WHITE);
-        enterButton.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
-        enterButton.setBorderPainted(false);
-        enterButton.setOpaque(true);
-        enterButton.setHorizontalAlignment(SwingConstants.CENTER);
-        enterButton.setPreferredSize(new Dimension(180, 35));
         enterButton.addActionListener(e -> {
             if ((enterButtonListener != null)) {
                 enterButtonListener.actionPerformed(e);

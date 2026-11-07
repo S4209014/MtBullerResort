@@ -20,6 +20,9 @@ public class PrimaryButton extends JButton {
     /** Same size as a plain button with this text, so primary and normal buttons line up. */
     @Override
     public Dimension getPreferredSize() {
+        if (isPreferredSizeSet()) {
+            return super.getPreferredSize();
+        }
         return new JButton(getText()).getPreferredSize();
     }
 
@@ -34,7 +37,9 @@ public class PrimaryButton extends JButton {
             fill = fill.darker();
         }
         g2.setColor(fill);
-        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+        // A native button's bounds include a margin around the visible shape (more room underneath for the
+        // shadow). Paint inside that margin so this button looks the same size as a plain button.
+        g2.fillRoundRect(5, 4, getWidth() - 10, getHeight() - 9, 8, 8);
         g2.dispose();
         super.paintComponent(g); // draws the text on top
     }
