@@ -50,7 +50,8 @@ public class BundleDatabase {
             bundleStmt.setInt(1, bundle.getId());
             bundleStmt.setInt(2, customer.getId());
             bundleStmt.setString(3, customer.getName());
-            bundleStmt.setString(4, customer.getContact());
+            // email and phone share the existing contact column (no schema change): "email | phone"
+            bundleStmt.setString(4, customer.getContact() + " | " + customer.getPhone());
             bundleStmt.setString(5, customer.getLevel().name());
             bundleStmt.setString(6, bundle.getStartDate().toString());
             bundleStmt.setInt(7, bundle.getNights());
@@ -110,8 +111,10 @@ public class BundleDatabase {
             int customerId = rs.getInt("customer_id");
             Customer customer = resort.findCustomer(customerId);
             if (customer == null) {
+                String[] contactParts = rs.getString("contact").split(" \\| ", 2);
+                String phone = contactParts.length > 1 ? contactParts[1] : "";
                 customer = new Customer(customerId, rs.getString("customer_name"),
-                        rs.getString("contact"), SkiLevel.valueOf(rs.getString("level")));
+                        contactParts[0], phone, SkiLevel.valueOf(rs.getString("level")));
                 resort.addCustomerFromDb(customer);
             }
 

@@ -179,6 +179,82 @@ public class TravelBundle implements Pricable {
         return sb.toString();
     }
 
+    @Override
+    public String toString() {
+        String room = accommodation == null ? "no room" : accommodation.getId();
+        return String.format("B%03d · %s · %s", id, customer.getName(), room);
+    }
+
+    /** Per-person table plus the cost breakdown, for the Bundles tab details area. */
+    public String costBreakdown() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Bundle B%03d · %s (C%03d)%n", id, customer.getName(), customer.getId()));
+        if (accommodation != null) {
+            sb.append(String.format("Stay   %s, sleeps %d%n", accommodation.getLabel(), accommodation.getCapacity()));
+        }
+        sb.append(String.format("       %s -> %s (%d nights)%n%n", startDate, getEndDate(), nights));
+
+        sb.append(String.format("%-20s %-14s %-12s %s%n", "PERSON", "LEVEL", "LIFT", "LESSONS"));
+        sb.append(personRow(customer.getId(), true, customer.getName(), customer.getLevel()));
+        for (FamilyMember member : family) {
+            sb.append(personRow(member.getId(), false, member.getName(), member.getLevel()));
+        }
+        sb.append("\n");
+
+        double dayRaw = 0;
+        int seasonCount = 0;
+        for (LiftPass pass : liftPasses) {
+            if (pass.getType() == LiftPassType.SEASON) {
+                seasonCount++;
+            } else {
+                dayRaw += pass.getPrice();
+            }
+        }
+        int dayCount = totalDayPasses();
+        boolean discount = dayCount >= 5;
+        double dayCost = discount ? dayRaw * 0.9 : dayRaw;
+
+        if (accommodation != null) {
+            sb.append(String.format("%-18s %-22s $%,9.2f%n", "Accommodation",
+                    nights + " x $" + String.format("%.2f", accommodation.getPricePerNight()), getStayTotal()));
+        }
+        if (dayCount > 0) {
+            String label = dayCount + " x $" + (int) LiftPass.DAY_PRICE + (discount ? " - 10%" : "");
+            sb.append(String.format("%-18s %-22s $%,9.2f%n", "Day passes", label, dayCost));
+        }
+        if (seasonCount > 0) {
+            sb.append(String.format("%-18s %-22s $%,9.2f%n", "Season pass",
+                    seasonCount + " x $" + (int) LiftPass.SEASON_PRICE, seasonCount * LiftPass.SEASON_PRICE));
+        }
+        if (!lessons.isEmpty()) {
+            StringBuilder calc = new StringBuilder();
+            for (Lesson lesson : lessons) {
+                if (lesson.getCount() == 0) {
+                    continue;
+                }
+                if (calc.length() > 0) {
+                    calc.append("+");
+                }
+                calc.append(lesson.getCount()).append("x").append((int) lesson.getLevel().getLessonPrice());
+            }
+            sb.append(String.format("%-18s %-22s $%,9.2f%n", "Lessons", calc, getLessonTotal()));
+        }
+        sb.append("\n");
+        sb.append(String.format("%-41s $%,9.2f", "TOTAL", getPrice()));
+        return sb.toString();
+    }
+
+    private String personRow(int personId, boolean isCustomer, String name, SkiLevel level) {
+        LiftPass pass = findPass(personId, isCustomer);
+        Lesson lesson = findLesson(personId, isCustomer);
+        String lift = "-";
+        if (pass != null) {
+            lift = pass.getType() == LiftPassType.SEASON ? "Season" : pass.getDays() + " days";
+        }
+        String lessonCount = lesson == null ? "0" : String.valueOf(lesson.getCount());
+        return String.format("%-20s %-14s %-12s %s%n", name, level, lift, lessonCount);
+    }
+
     public String prettyPrint() {
         String acc = "(none yet)";
         if (accommodation != null) {

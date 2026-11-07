@@ -22,4 +22,9 @@ public class FamilyMember {
     public SkiLevel getLevel() {
         return level;
     }
+
+    @Override
+    public String toString() {
+        return name + " · " + level;
+    }
 }
