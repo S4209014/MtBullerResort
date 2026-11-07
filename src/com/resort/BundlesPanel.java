@@ -19,13 +19,13 @@ public class BundlesPanel extends ResortPanel implements ActionListener {
     private final JRadioButton dayPassRadio = new JRadioButton("Day passes", true);
     private final JRadioButton seasonPassRadio = new JRadioButton("Season pass");
     private final JSpinner daysSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 60, 1));
-    private final JButton addLiftPass = new JButton("Add Lift Pass");
+    private final JButton addLiftPass = new PrimaryButton("Add Lift Pass");
 
     // ---- Lessons ----
     private final JComboBox<PersonOption> lessonPerson = new JComboBox<>();
     private final JTextField lessonLevelField = new JTextField(14);
     private final JSpinner lessonsSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 30, 1));
-    private final JButton addLessons = new JButton("Add Lessons");
+    private final JButton addLessons = new PrimaryButton("Add Lessons");
 
     // ---- Details ----
     private final JTextArea detailsText = outputArea();
@@ -135,7 +135,6 @@ public class BundlesPanel extends ResortPanel implements ActionListener {
         gbc = cell(1, 4);
         gbc.anchor = GridBagConstraints.LINE_END;
         addLiftPass.addActionListener(this);
-        styleAction(addLiftPass);
         panel.add(addLiftPass, gbc);
         return panel;
     }
@@ -153,7 +152,6 @@ public class BundlesPanel extends ResortPanel implements ActionListener {
         GridBagConstraints gbc = cell(1, 3);
         gbc.anchor = GridBagConstraints.LINE_END;
         addLessons.addActionListener(this);
-        styleAction(addLessons);
         panel.add(addLessons, gbc);
 
         lessonPerson.addActionListener(e -> updateLessonLevel());
@@ -168,13 +166,6 @@ public class BundlesPanel extends ResortPanel implements ActionListener {
         gbc.fill = GridBagConstraints.BOTH;
         panel.add(new JScrollPane(detailsText), gbc);
         return panel;
-    }
-
-    private void styleAction(JButton button) {
-        button.setBackground(ResortGUI.getPrimaryColour());
-        button.setForeground(Color.WHITE);
-        button.setOpaque(true);
-        button.setBorderPainted(false);
     }
 
     // ------------------------------------------------------------------ public refresh

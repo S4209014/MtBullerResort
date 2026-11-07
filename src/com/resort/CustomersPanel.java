@@ -15,7 +15,7 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
     private final JTextField phoneField = new JTextField(14);
     private final JComboBox<SkiLevel> levelDropdown = new JComboBox<>(SkiLevel.values());
 
-    private final JButton addCustomer = new JButton("Add Customer");
+    private final JButton addCustomer = new PrimaryButton("Add Customer");
     private final JButton clearForm = new JButton("Clear");
     private final JButton listCustomers = new JButton("List Customers");
 
@@ -97,10 +97,6 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
         buttons.add(clearForm, b);
         b = cell(1, 0);
         addCustomer.addActionListener(this);
-        addCustomer.setBackground(ResortGUI.getPrimaryColour());
-        addCustomer.setForeground(Color.WHITE);
-        addCustomer.setOpaque(true);
-        addCustomer.setBorderPainted(false);
         buttons.add(addCustomer, b);
         form.add(buttons, gbc);
         return form;

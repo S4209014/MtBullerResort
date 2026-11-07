@@ -23,7 +23,7 @@ public class AccommodationPanel extends ResortPanel implements ActionListener {
     private final JSpinner numGuestsSpinner = new JSpinner();
 
     private final JButton showAll = new JButton("Show All");
-    private final JButton showAvailable = new JButton("Show Available");
+    private final JButton showAvailable = new PrimaryButton("Show Available");
 
     AccommodationPanel(MtBullerResort resort, ResortGUI gui) {
         super("Accommodation", resort, gui);

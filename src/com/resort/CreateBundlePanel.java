@@ -22,7 +22,7 @@ public class CreateBundlePanel extends ResortPanel implements ActionListener {
     // ---- 2. Family members ----
     private final JTextField memberName = new JTextField(14);
     private final JComboBox<SkiLevel> memberLevel = new JComboBox<>(SkiLevel.values());
-    private final JButton addMember = new JButton("Add Member");
+    private final JButton addMember = new PrimaryButton("Add Member");
     private final JButton removeMember = new JButton("Remove");
     private final DefaultListModel<FamilyMember> familyModel = new DefaultListModel<>();
     private final JList<FamilyMember> familyList = new JList<>(familyModel);
@@ -32,12 +32,12 @@ public class CreateBundlePanel extends ResortPanel implements ActionListener {
     private final String[] accommodationTypes = {"All Types", "Hotel Room", "Apartment", "Lodge Room"};
     private final JComboBox<String> typeDropdown = new JComboBox<>(accommodationTypes);
     private final JTextField maxPriceField = new JTextField(8);
-    private final JButton findAvailable = new JButton("Find Available");
+    private final JButton findAvailable = new PrimaryButton("Find Available");
     private final JLabel roomsInfoLabel = new JLabel(" ");
     private final DefaultListModel<Accommodation> roomModel = new DefaultListModel<>();
     private final JList<Accommodation> roomList = new JList<>(roomModel);
     private final JLabel costLabel = new JLabel("Accommodation cost: -");
-    private final JButton createBundle = new JButton("Create Bundle");
+    private final JButton createBundle = new PrimaryButton("Create Bundle");
 
     // the nights used for the last "Find available", so the cost label matches the list shown
     private int searchedNights = 1;
@@ -106,10 +106,6 @@ public class CreateBundlePanel extends ResortPanel implements ActionListener {
         removeMember.addActionListener(this);
         buttons.add(removeMember, cell(0, 0));
         addMember.addActionListener(this);
-        addMember.setBackground(ResortGUI.getPrimaryColour());
-        addMember.setForeground(Color.WHITE);
-        addMember.setOpaque(true);
-        addMember.setBorderPainted(false);
         buttons.add(addMember, cell(1, 0));
 
         GridBagConstraints gbc = cell(0, 2);
@@ -147,10 +143,6 @@ public class CreateBundlePanel extends ResortPanel implements ActionListener {
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.LINE_END;
         findAvailable.addActionListener(this);
-        findAvailable.setBackground(ResortGUI.getPrimaryColour());
-        findAvailable.setForeground(Color.WHITE);
-        findAvailable.setOpaque(true);
-        findAvailable.setBorderPainted(false);
         filters.add(findAvailable, gbc);
 
         gbc = cell(0, 0);
@@ -166,15 +158,15 @@ public class CreateBundlePanel extends ResortPanel implements ActionListener {
 
         // room list
         roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        // Same text as the Accommodation page (Accommodation.toString), in a monospaced font with tabs
+        // expanded to 8-column stops like the text area there, so the columns line up.
         roomList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                                                           boolean selected, boolean focus) {
                 super.getListCellRendererComponent(list, value, index, selected, focus);
-                if (value instanceof Accommodation room) {
-                    setText(String.format("%s · %s · sleeps %d · $%.2f/night",
-                            room.getId(), room.getLabel(), room.getCapacity(), room.getPricePerNight()));
-                }
+                setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+                setText(expandTabs(String.valueOf(value)));
                 return this;
             }
         });
@@ -198,10 +190,6 @@ public class CreateBundlePanel extends ResortPanel implements ActionListener {
         gbc = cell(1, 3);
         gbc.anchor = GridBagConstraints.LINE_END;
         createBundle.addActionListener(this);
-        createBundle.setBackground(ResortGUI.getPrimaryColour());
-        createBundle.setForeground(Color.WHITE);
-        createBundle.setOpaque(true);
-        createBundle.setBorderPainted(false);
         panel.add(createBundle, gbc);
         return panel;
     }
@@ -294,10 +282,13 @@ public class CreateBundlePanel extends ResortPanel implements ActionListener {
             roomModel.addElement(room);
         }
         searchedNights = nights;
-        roomsInfoLabel.setText(String.format("Rooms that sleep %d and are free %s -> %s:",
-                party, date, date.plusDays(nights)));
+        String priceNote = maxPrice == null ? "" : String.format(", max $%.2f/night", maxPrice);
+        roomsInfoLabel.setText(rooms.isEmpty()
+                ? String.format("No rooms sleep %d, are free %s -> %s%s.", party, date, date.plusDays(nights), priceNote)
+                : String.format("Rooms that sleep %d and are free %s -> %s%s:", party, date, date.plusDays(nights), priceNote));
         updateCostLabel();
-        gui.setStatusText(String.format("Found %d accommodation options for a party of %d", rooms.size(), party));
+        gui.setStatusText(String.format("Found %d accommodation options for a party of %d%s",
+                rooms.size(), party, priceNote));
     }
 
     private void onCreateBundle() {
@@ -362,7 +353,7 @@ public class CreateBundlePanel extends ResortPanel implements ActionListener {
             return null;
         }
         try {
-            double price = Double.parseDouble(text);
+            double price = Double.parseDouble(text.replace("$", "").replace(",", "").trim());
             if (price <= 0) {
                 throw new NumberFormatException();
             }
@@ -371,6 +362,19 @@ public class CreateBundlePanel extends ResortPanel implements ActionListener {
             showError("Invalid maximum price", "Maximum price must be a positive number, e.g. 250.");
             return -1.0;
         }
+    }
+
+    private static String expandTabs(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (char ch : text.toCharArray()) {
+            if (ch == '\t') {
+                int pad = 8 - (sb.length() % 8);
+                sb.append(" ".repeat(pad));
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
     }
 
     private Class<? extends Accommodation> selectedType() {
