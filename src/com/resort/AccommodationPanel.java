@@ -26,8 +26,8 @@ public class AccommodationPanel extends ResortPanel implements ActionListener {
     private final JButton showAll = new JButton("Show All");
     private final JButton showAvailable = new JButton("Show Available");
 
-    AccommodationPanel(MtBullerResort resort) {
-        super("Accommodation", resort);
+    AccommodationPanel(MtBullerResort resort, ResortGUI gui) {
+        super("Accommodation", resort, gui);
         createComponents();
     }
 
@@ -60,7 +60,8 @@ public class AccommodationPanel extends ResortPanel implements ActionListener {
         gbc.insets = new Insets(8, 4, 4, 4);
 
         TitledBorder titledBorder = new TitledBorder("Filter");
-        titledBorder.setTitleFont(Font.getFont(Font.SANS_SERIF));
+        Font titleBorderFont = new Font(Font.SANS_SERIF, Font.BOLD, 14);
+        titledBorder.setTitleFont(titleBorderFont);
         titledBorder.setTitleColor(ResortGUI.getPrimaryColour());
         filterPanel.setBorder(titledBorder);
 
@@ -132,30 +133,49 @@ public class AccommodationPanel extends ResortPanel implements ActionListener {
     private void onAvailableButton() {
         this.resultsText.setText("");
         LocalDate date = LocalDate.parse(this.checkInDate.getText());
+
+        // Check if the date is in the past
+        String inPastResult = ResortGUI.dateInPastCheck(date, true);
+        if (!inPastResult.isEmpty())  {
+            this.gui.setStatusText(inPastResult);
+            return;
+        }
+
         int nights = (int) this.numNightsSpinner.getValue();
         int people = (int) this.numGuestsSpinner.getValue();
 
         ArrayList<Accommodation> rooms = resort.getAvailableRooms(date, nights, people);
+        // Count the amount of accommodations we find
+        int i = 0;
 
         for (Accommodation room : rooms) {
             switch (this.typeDropdown.getSelectedItem().toString()) {
-                case "All Types" -> this.resultsText.append(room + "\n");
+                case "All Types" -> {
+                    i++;
+                    this.resultsText.append(room + "\n");
+                }
                 case "Hotel Room" -> {
                     if (room instanceof HotelRoom) {
+                        i++;
                         this.resultsText.append(room + "\n");
                     }
                 }
                 case "Apartment" -> {
                     if (room instanceof Apartment) {
+                        i++;
                         this.resultsText.append(room + "\n");
                     }
                 }
                 case "Lodge Room" -> {
                     if (room instanceof LodgeRoom) {
+                        i++;
                         this.resultsText.append(room + "\n");
                     }
                 }
             }
         }
+        this.gui.setStatusText(
+                String.format("Loaded %d accommodation options for %s", i, typeDropdown.getSelectedItem())
+        );
     }
 }

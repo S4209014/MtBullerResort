@@ -14,8 +14,8 @@ public class WelcomePanel extends ResortPanel {
     private ActionListener enterButtonListener;
     private final ImageIcon logo = loadLogo("/assets/MtBullerResort_Logo.png", 150);
 
-    WelcomePanel(MtBullerResort resort) {
-        super("Welcome", resort);
+    WelcomePanel(MtBullerResort resort, ResortGUI gui) {
+        super("Welcome", resort, gui);
         createComponents();
     }
 

@@ -3,6 +3,8 @@ package com.resort;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.EnumMap;
 
 /**
@@ -28,11 +30,11 @@ public class ResortGUI extends JFrame {
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
 
-    private final WelcomePanel welcomePanel = new WelcomePanel(resort);
-    private final AccommodationPanel accommodationPanel = new AccommodationPanel(resort);
-    private final CustomersPanel customersPanel = new CustomersPanel(resort);
-    private final CreateBundlePanel createBundlePanel = new CreateBundlePanel(resort);
-    private final BundlesPanel bundlesPanel = new BundlesPanel(resort);
+    private final WelcomePanel welcomePanel = new WelcomePanel(resort, this);
+    private final AccommodationPanel accommodationPanel = new AccommodationPanel(resort, this);
+    private final CustomersPanel customersPanel = new CustomersPanel(resort, this);
+    private final CreateBundlePanel createBundlePanel = new CreateBundlePanel(resort, this);
+    private final BundlesPanel bundlesPanel = new BundlesPanel(resort, this);
 
     private final JLabel statusLabel = new JLabel("");
 
@@ -201,8 +203,36 @@ public class ResortGUI extends JFrame {
         return primaryColour;
     }
 
+    /**
+     * This method takes in a date and checks if it was in the past. You can also check whether
+     * it is too far into the future.
+     * @param date The date you want to check (yyyy-MM-dd)
+     * @param limitTwoYears If you want to limit it to only 2 years into the future too.
+     * @return Only returns a string as a feedback warning e.g "cannot be in past"
+     */
+    public static String dateInPastCheck(LocalDate date, boolean limitTwoYears) {
+        try {
+            if (date.isBefore(LocalDate.now())) {
+                return "The date cannot be in the past. Please try again";
+            }
+            if (limitTwoYears && date.isAfter(LocalDate.now().plusYears(2))) {
+                return "Let's not plan that far ahead - 2 years out is the limit.";
+            }
+            return "";
+        } catch (DateInPastException e) {
+            return e.getMessage();
+        } catch (DateTimeParseException e) {
+            return "Use yyyy-MM-dd  (e.g. 2026-09-01)";
+        }
+    }
+
     public static void main(String[] args) {
-        new ResortGUI();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new ResortGUI();
+            }
+        });
     }
 }
 

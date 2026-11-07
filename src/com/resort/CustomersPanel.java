@@ -2,8 +2,8 @@ package com.resort;
 
 public class CustomersPanel extends ResortPanel {
 
-    CustomersPanel(MtBullerResort resort) {
-        super("Customers", resort);
+    CustomersPanel(MtBullerResort resort, ResortGUI gui) {
+        super("Customers", resort, gui);
     }
 
     @Override
