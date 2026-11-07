@@ -22,7 +22,7 @@ import java.util.EnumMap;
  * @see GridBagConstraints
  * @author BrodieCousins
  */
-public class ResortGUI extends JFrame {
+public class ResortGUI extends JFrame implements ActionListener {
     private final MtBullerResort resort = new MtBullerResort();
 
     private final JMenuBar menuBar = new JMenuBar();
@@ -52,7 +52,14 @@ public class ResortGUI extends JFrame {
         resort.setupDefaults();
         // Standard GUI configuration
         this.setTitle("Mt Buller Resort - Booking Manager");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // The close button runs the same safe-exit code as File > Exit (confirm, save, then quit)
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exitProgram();
+            }
+        });
         this.setSize(1100, 680);
         this.setLayout(new GridBagLayout());
         this.setLocationRelativeTo(null); // Spawns window in the middle of the screen
@@ -105,6 +112,93 @@ public class ResortGUI extends JFrame {
 
         menuItems.put(MenuAction.HOW_TO_USE, howToUse);
         menuItems.put(MenuAction.ABOUT, about);
+
+        // One listener (this class) handles every menu item
+        for (JMenuItem item : menuItems.values()) {
+            item.addActionListener(this);
+        }
+    }
+
+    /**
+     * Handles all menu item clicks by looking up which {@link MenuAction} was pressed.
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        for (MenuAction action : menuItems.keySet()) {
+            if (e.getSource() == menuItems.get(action)) {
+                switch (action) {
+                    case DB_SAVE -> saveToDatabase();
+                    case EXIT -> exitProgram();
+                    case HOW_TO_USE -> showHowToUse();
+                    case ABOUT -> showAbout();
+                }
+            }
+        }
+    }
+
+    /**
+     * Writes every bundle to the SQLite database and tells the user how it went.
+     * @return true if the save worked (or there was nothing to save)
+     */
+    private boolean saveToDatabase() {
+        if (resort.getBundles().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "There are no bundles to save yet.",
+                    "Nothing to save", JOptionPane.INFORMATION_MESSAGE);
+            setStatusText("No bundles to save");
+            return true;
+        }
+        try {
+            resort.saveToDatabase();
+            String message = resort.getBundles().size() + " bundle(s) saved to " + MtBullerResort.DB_FILE + ".";
+            JOptionPane.showMessageDialog(this, message, "Saved", JOptionPane.INFORMATION_MESSAGE);
+            setStatusText(message);
+            return true;
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Could not save to " + MtBullerResort.DB_FILE + ": " + ex.getMessage(),
+                    "Save failed", JOptionPane.ERROR_MESSAGE);
+            setStatusText("Save failed");
+            return false;
+        }
+    }
+
+    /**
+     * Asks before quitting, saves everything to the database, then closes the program.
+     * Used by both File &gt; Exit and the window's close button.
+     */
+    private void exitProgram() {
+        int choice = JOptionPane.showConfirmDialog(this,
+                "Save all bundles to the database and exit?", "Exit", JOptionPane.YES_NO_OPTION);
+        if (choice != JOptionPane.YES_OPTION) {
+            return;
+        }
+        if (!saveToDatabase()) {
+            int quitAnyway = JOptionPane.showConfirmDialog(this,
+                    "Your data could not be saved. Exit anyway?", "Exit without saving",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (quitAnyway != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+        this.dispose();
+        System.exit(0);
+    }
+
+    private void showHowToUse() {
+        JOptionPane.showMessageDialog(this,
+                """
+                Accommodation: show all rooms, or filter by dates, nights, guests and type.
+                Customers: add a customer and list everyone (with family members).
+                Create Bundle: pick a customer, dates and family, find a room, then Create Bundle.
+                Bundles: select a bundle to add lift passes and lessons per person.
+                File > Save to database stores your bundles. Closing the window saves too.""",
+                "How to use", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showAbout() {
+        JOptionPane.showMessageDialog(this,
+                "Mt Buller Resort - Booking Manager\nCustom travel bundles for customers and their families.",
+                "About", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -126,6 +220,16 @@ public class ResortGUI extends JFrame {
         int[] enabledTabbedPaneIndex = new int[]{1, 2, 3};
         boolean[] enabledTabbedPanes = new boolean[]{false, false, false};
         setTabEnabled(enabledTabbedPaneIndex, enabledTabbedPanes);
+
+        // Refresh a tab's data whenever it is opened, so it reflects changes made in other tabs
+        tabbedPane.addChangeListener(e -> {
+            Component selected = tabbedPane.getSelectedComponent();
+            if (selected == createBundlePanel) {
+                createBundlePanel.refreshCustomers();
+            } else if (selected == bundlesPanel) {
+                bundlesPanel.refreshBundles();
+            }
+        });
 
         this.add(tabbedPane, gbc);
     }
@@ -167,6 +271,13 @@ public class ResortGUI extends JFrame {
     private void welcomeButtonPressed(CardLayout cardLayout, JPanel cardPanel) {
         cardLayout.show(cardPanel, ResortPanelType.ACCOMMODATION.name());
 
+        // The welcome screen only appears once, so remove it for good
+        cardPanel.remove(welcomePanel);
+        cardPanel.revalidate();
+        cardPanel.repaint();
+        setStatusText(String.format("Loaded %d accommodations · %d customers · %d bundles",
+                resort.getAccommodations().size(), resort.getCustomers().size(), resort.getBundles().size()));
+
         // Re-enable tabs
         int[] tabsIndex = {1, 2, 3}; // Customers, Create Bundle, Bundles
         boolean[] tabsEnabled = {true, true, true}; // Enable all tabs;
@@ -184,7 +295,7 @@ public class ResortGUI extends JFrame {
         gbc.insets = new Insets(2, 4, 4, 4);
         gbc.ipadx = 4;
         gbc.ipady = 4;
-        setStatusText("Testing...");
+        setStatusText("Welcome - click Enter to begin");
 
         this.add(statusLabel, gbc);
     }
