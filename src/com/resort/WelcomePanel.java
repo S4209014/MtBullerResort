@@ -35,6 +35,8 @@ public class WelcomePanel extends ResortPanel {
         descriptionLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // ---- Enter button formatting ---- //
+        enterButton.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+        enterButton.setPreferredSize(new Dimension(260, 64));
         enterButton.addActionListener(e -> {
             if ((enterButtonListener != null)) {
                 enterButtonListener.actionPerformed(e);
