@@ -109,6 +109,7 @@ public class AccommodationPanel extends ResortPanel implements ActionListener {
         showAvailable.addActionListener(this);
         filterPanel.add(showAvailable, gbc);
 
+        resultsText.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         resultsText.setLineWrap(true);
         resultsText.setWrapStyleWord(true);
     }
@@ -146,6 +147,15 @@ public class AccommodationPanel extends ResortPanel implements ActionListener {
 
         ArrayList<Accommodation> rooms = resort.getAvailableRooms(date, nights, people);
         // Count the amount of accommodations we find
+
+        this.resultsText.append(
+                String.format("Looking for accommodation for %d people from %s for %d night(s).\n", people, date, nights)
+        );
+        this.resultsText.append("\n");
+        this.resultsText.append(gui.returnBarString());
+        this.resultsText.append(gui.returnHeaderString("ACCOMMODATION OPTIONS"));
+        this.resultsText.append(gui.returnBarString());
+        this.resultsText.append("\n");
         int i = 0;
 
         for (Accommodation room : rooms) {
@@ -172,10 +182,14 @@ public class AccommodationPanel extends ResortPanel implements ActionListener {
                         this.resultsText.append(room + "\n");
                     }
                 }
+                default -> {
+                    this.gui.setStatusText("Error displaying all options - please try again");
+                    return;
+                }
             }
         }
         this.gui.setStatusText(
-                String.format("Loaded %d accommodation options for %s", i, typeDropdown.getSelectedItem())
+                String.format("Displayed %d accommodation options for %s", i, typeDropdown.getSelectedItem())
         );
     }
 }

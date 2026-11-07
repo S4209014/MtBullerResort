@@ -39,6 +39,7 @@ public class ResortGUI extends JFrame {
     private final JLabel statusLabel = new JLabel("");
 
     private static final Color primaryColour = new Color(0x1d2e52);
+    private final int barWidth = 33; // this is how many characters the header and equal sign bars are in a line.
 
     /**
      * Running this function will create a window and initialise all functions for the program to be interacted with.
@@ -52,10 +53,10 @@ public class ResortGUI extends JFrame {
         // Standard GUI configuration
         this.setTitle("Mt Buller Resort - Booking Manager");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1000, 680);
+        this.setSize(1100, 680);
         this.setLayout(new GridBagLayout());
         this.setLocationRelativeTo(null); // Spawns window in the middle of the screen
-        this.setMinimumSize(new Dimension(800, 600));
+        this.setMinimumSize(new Dimension(900, 650));
 
         //------ All init functions ------//
         createMenuBar();
@@ -224,6 +225,42 @@ public class ResortGUI extends JFrame {
         } catch (DateTimeParseException e) {
             return "Use yyyy-MM-dd  (e.g. 2026-09-01)";
         }
+    }
+
+    public String returnHeaderString (String title) {
+        return labelledBar(title) + "\n";
+    }
+
+    public String returnBarString () {
+        return fill('=') + "\n";
+    }
+
+    private String fill(char c) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < barWidth; i++) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    // =====  TITLE  =====  same width as the welcome bars
+    private String labelledBar(String title) {
+        String mid = "  " + title + "  ";
+        int leftover = barWidth - mid.length();
+        if (leftover < 2) {
+            leftover = 2;
+        }
+        int left = leftover / 2;
+        int right = leftover - left;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < left; i++) {
+            sb.append('=');
+        }
+        sb.append(mid);
+        for (int i = 0; i < right; i++) {
+            sb.append('=');
+        }
+        return sb.toString();
     }
 
     public static void main(String[] args) {
