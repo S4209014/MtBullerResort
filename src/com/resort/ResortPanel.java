@@ -44,6 +44,25 @@ public abstract class ResortPanel extends JPanel {
         return gbc;
     }
 
+    /** Label | input | hint, all in one GridBagLayout row. The input column takes the spare width. */
+    protected void addRow(JPanel panel, int row, String label, JComponent input, String hint) {
+        GridBagConstraints gbc = cell(0, row);
+        gbc.anchor = GridBagConstraints.LINE_END;
+        panel.add(new JLabel(label), gbc);
+
+        gbc = cell(1, row);
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(input, gbc);
+
+        if (hint != null) {
+            gbc = cell(2, row);
+            JLabel hintLabel = new JLabel(hint);
+            hintLabel.setForeground(Color.GRAY);
+            panel.add(hintLabel, gbc);
+        }
+    }
+
     /** Shared yyyy-MM-dd formatter for the date fields. */
     protected DateFormatter dateFormatter() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

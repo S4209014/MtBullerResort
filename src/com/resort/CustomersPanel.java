@@ -87,23 +87,6 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
         return form;
     }
 
-    /** Label | input | hint, all in one GridBagLayout row. */
-    private void addRow(JPanel panel, int row, String label, JComponent input, String hint) {
-        GridBagConstraints gbc = cell(0, row);
-        gbc.anchor = GridBagConstraints.LINE_END;
-        panel.add(new JLabel(label), gbc);
-
-        gbc = cell(1, row);
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(input, gbc);
-
-        gbc = cell(2, row);
-        JLabel hintLabel = new JLabel(hint);
-        hintLabel.setForeground(Color.GRAY);
-        panel.add(hintLabel, gbc);
-    }
-
     private void resetForm() {
         idField.setText(String.format("C%03d", resort.peekNextCustomerId()));
         nameField.setText("");
