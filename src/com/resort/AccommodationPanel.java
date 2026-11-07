@@ -2,12 +2,11 @@ package com.resort;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.text.DateFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -103,6 +102,7 @@ public class AccommodationPanel extends ResortPanel implements ActionListener {
         filterPanel.add(numGuestsSpinner, gbc);
 
         gbc.gridx = 6;
+        showAll.addActionListener(this);
         filterPanel.add(showAll, gbc);
 
         gbc.gridx = 7;
@@ -114,26 +114,36 @@ public class AccommodationPanel extends ResortPanel implements ActionListener {
         resultsText.setWrapStyleWord(true);
     }
 
-    private DateFormatter dateFormatter() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setLenient(false);
-
-        // create the formatter
-        DateFormatter dateFormatter = new DateFormatter(dateFormat);
-        dateFormatter.setCommitsOnValidEdit(true);
-        return dateFormatter;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.showAvailable) {
             onAvailableButton();
+        } else if (e.getSource() == this.showAll) {
+            onShowAllButton();
         }
+    }
+
+    private void onShowAllButton() {
+        this.resultsText.setText("");
+        this.resultsText.append(gui.returnBarString());
+        this.resultsText.append(gui.returnHeaderString("ALL ACCOMMODATIONS"));
+        this.resultsText.append(gui.returnBarString());
+        this.resultsText.append("\n");
+        for (Accommodation room : resort.getAccommodations()) {
+            this.resultsText.append(room + "\n");
+        }
+        this.gui.setStatusText(String.format("Displayed all %d accommodations", resort.getAccommodations().size()));
     }
 
     private void onAvailableButton() {
         this.resultsText.setText("");
-        LocalDate date = LocalDate.parse(this.checkInDate.getText());
+        LocalDate date;
+        try {
+            date = LocalDate.parse(this.checkInDate.getText());
+        } catch (DateTimeParseException ex) {
+            showError("Invalid date", "Use yyyy-MM-dd (e.g. 2026-09-01).");
+            return;
+        }
 
         // Check if the date is in the past
         String inPastResult = ResortGUI.dateInPastCheck(date, true);
