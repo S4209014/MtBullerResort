@@ -190,7 +190,7 @@ public class TravelBundle implements Pricable {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Bundle B%03d · %s (C%03d)%n", id, customer.getName(), customer.getId()));
         if (accommodation != null) {
-            sb.append(String.format("Stay   %s, sleeps %d%n", accommodation.getLabel(), accommodation.getCapacity()));
+            sb.append(String.format("Stay   %s \u00b7 %s%n", accommodation.getId(), accommodation.getLabel()));
         }
         sb.append(String.format("       %s -> %s (%d nights)%n%n", startDate, getEndDate(), nights));
 
