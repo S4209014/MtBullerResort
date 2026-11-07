@@ -298,7 +298,7 @@ public class BundlesPanel extends ResortPanel implements ActionListener {
             lessonLevelField.setText("");
             return;
         }
-        lessonLevelField.setText(String.format("%s · $%.0f/lesson",
+        lessonLevelField.setText(String.format("%s - $%.0f/lesson",
                 person.level(), person.level().getLessonPrice()));
     }
 

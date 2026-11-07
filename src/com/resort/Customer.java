@@ -60,6 +60,6 @@ public class Customer {
 
     @Override
     public String toString() {
-        return String.format("C%03d · %s", id, name);
+        return String.format("C%03d - %s", id, name);
     }
 }

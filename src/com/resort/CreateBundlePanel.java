@@ -396,7 +396,7 @@ public class CreateBundlePanel extends ResortPanel implements ActionListener {
     private void updatePartyLabel() {
         int party = 1 + familyModel.size();
         int left = MAX_FAMILY - familyModel.size();
-        partyLabel.setText(String.format("Party size: %d (customer + %d) · %d places left",
+        partyLabel.setText(String.format("Party size: %d (customer + %d) - %d places left",
                 party, familyModel.size(), left));
         addMember.setEnabled(left > 0);
     }

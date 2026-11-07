@@ -182,15 +182,15 @@ public class TravelBundle implements Pricable {
     @Override
     public String toString() {
         String room = accommodation == null ? "no room" : accommodation.getId();
-        return String.format("B%03d · %s · %s", id, customer.getName(), room);
+        return String.format("B%03d - %s - %s", id, customer.getName(), room);
     }
 
     /** Per-person table plus the cost breakdown, for the Bundles tab details area. */
     public String costBreakdown() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Bundle B%03d · %s (C%03d)%n", id, customer.getName(), customer.getId()));
+        sb.append(String.format("Bundle B%03d - %s (C%03d)%n", id, customer.getName(), customer.getId()));
         if (accommodation != null) {
-            sb.append(String.format("Stay   %s \u00b7 %s%n", accommodation.getId(), accommodation.getLabel()));
+            sb.append(String.format("Stay   %s - %s%n", accommodation.getId(), accommodation.getLabel()));
         }
         sb.append(String.format("       %s -> %s (%d nights)%n%n", startDate, getEndDate(), nights));
 

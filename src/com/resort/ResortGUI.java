@@ -277,7 +277,7 @@ public class ResortGUI extends JFrame implements ActionListener {
         cardPanel.remove(welcomePanel);
         cardPanel.revalidate();
         cardPanel.repaint();
-        setStatusText(String.format("Loaded %d accommodations · %d customers · %d bundles",
+        setStatusText(String.format("Loaded %d accommodations - %d customers - %d bundles",
                 resort.getAccommodations().size(), resort.getCustomers().size(), resort.getBundles().size()));
 
         // Re-enable tabs

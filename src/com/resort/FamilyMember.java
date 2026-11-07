@@ -25,6 +25,6 @@ public class FamilyMember {
 
     @Override
     public String toString() {
-        return name + " · " + level;
+        return name + " - " + level;
     }
 }
