@@ -10,9 +10,9 @@ import java.awt.event.ActionListener;
  */
 public class CustomersPanel extends ResortPanel implements ActionListener {
     private final JTextField idField = new JTextField(6);
-    private final JTextField nameField = new JTextField(20);
-    private final JTextField emailField = new JTextField(20);
-    private final JTextField phoneField = new JTextField(20);
+    private final JTextField nameField = new JTextField(14);
+    private final JTextField emailField = new JTextField(14);
+    private final JTextField phoneField = new JTextField(14);
     private final JComboBox<SkiLevel> levelDropdown = new JComboBox<>(SkiLevel.values());
 
     private final JButton addCustomer = new JButton("Add Customer");
@@ -33,7 +33,7 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 0.3;
+        gbc.weightx = 0.0; // form keeps its natural width
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -41,7 +41,7 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
         this.add(initFormPanel(), gbc);
 
         gbc.gridx = 1;
-        gbc.weightx = 0.7;
+        gbc.weightx = 1.0; // list takes all the spare width
         this.add(initListPanel(), gbc);
 
         resetForm();
@@ -75,18 +75,22 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
     private JPanel initFormPanel() {
         JPanel form = titledPanel("Add customer");
 
-        addRow(form, 0, "Customer ID", idField, "Generated automatically");
+        // Hints sit under each field (not beside it) so the form stays narrow
+        addRow(form, 0, "Customer ID", idField, null);
         idField.setEditable(false);
-        addRow(form, 1, "Full name", nameField, "Letters and spaces only, e.g. Priya Nair");
-        addRow(form, 2, "Email", emailField, "e.g. priya.nair@email.com");
-        addRow(form, 3, "Phone", phoneField, "10 digits, no spaces, e.g. 0412345678");
-        addRow(form, 4, "Ski level", levelDropdown, "Choose one");
+        addRow(form, 1, "Full name", nameField, null);
+        addHint(form, 2, "Letters and spaces only");
+        addRow(form, 3, "Email", emailField, null);
+        addHint(form, 4, "e.g. name@mail.com");
+        addRow(form, 5, "Phone", phoneField, null);
+        addHint(form, 6, "10 digits, no spaces");
+        addRow(form, 7, "Ski level", levelDropdown, null);
 
-        GridBagConstraints gbc = cell(0, 5);
+        GridBagConstraints gbc = cell(0, 8);
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.LAST_LINE_END;
         gbc.weighty = 1.0;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 2;
         JPanel buttons = new JPanel(new GridBagLayout());
         GridBagConstraints b = cell(0, 0);
         clearForm.addActionListener(this);
@@ -100,6 +104,14 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
         buttons.add(addCustomer, b);
         form.add(buttons, gbc);
         return form;
+    }
+
+    private void addHint(JPanel panel, int row, String hint) {
+        GridBagConstraints gbc = cell(1, row);
+        gbc.insets = new Insets(0, 6, 4, 6);
+        JLabel label = new JLabel(hint);
+        label.setForeground(Color.GRAY);
+        panel.add(label, gbc);
     }
 
     private void resetForm() {
