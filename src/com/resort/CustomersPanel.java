@@ -29,33 +29,47 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
 
     @Override
     protected void createComponents() {
+        // Left: add-customer form. Right: customer list. Side by side, the list takes the spare width.
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gbc.insets = new Insets(8, 4, 2, 4);
-        this.add(initFormPanel(), gbc);
-
-        gbc.gridy = 1;
-        gbc.weightx = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.LINE_END;
-        gbc.insets = new Insets(2, 4, 2, 4);
-        listCustomers.addActionListener(this);
-        this.add(listCustomers, gbc);
-
-        gbc.gridy = 2;
-        gbc.weightx = 1.0;
+        gbc.weightx = 0.3;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(2, 4, 4, 4);
-        this.add(resultsPanel, gbc);
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gbc.insets = new Insets(8, 4, 4, 4);
+        this.add(initFormPanel(), gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        this.add(initListPanel(), gbc);
 
         resetForm();
         showList();
+    }
+
+    private JPanel initListPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+
+        GridBagConstraints gbc = cell(0, 0);
+        gbc.weightx = 1.0;
+        JLabel title = new JLabel("All customers");
+        title.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+        title.setForeground(ResortGUI.getPrimaryColour());
+        panel.add(title, gbc);
+
+        gbc = cell(1, 0);
+        gbc.anchor = GridBagConstraints.LINE_END;
+        listCustomers.addActionListener(this);
+        panel.add(listCustomers, gbc);
+
+        gbc = cell(0, 1);
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel.add(resultsPanel, gbc);
+        return panel;
     }
 
     private JPanel initFormPanel() {
@@ -68,10 +82,11 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
         addRow(form, 3, "Phone", phoneField, "10 digits, no spaces, e.g. 0412345678");
         addRow(form, 4, "Ski level", levelDropdown, "Choose one");
 
-        GridBagConstraints gbc = cell(1, 5);
+        GridBagConstraints gbc = cell(0, 5);
         gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.LINE_END;
-        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.LAST_LINE_END;
+        gbc.weighty = 1.0;
+        gbc.gridwidth = 3;
         JPanel buttons = new JPanel(new GridBagLayout());
         GridBagConstraints b = cell(0, 0);
         clearForm.addActionListener(this);
@@ -123,6 +138,20 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
         }
     }
 
+    private static String capitalise(SkiLevel level) {
+        String text = level.name();
+        return text.charAt(0) + text.substring(1).toLowerCase();
+    }
+
+    /**
+     * Refreshes anything that depends on resort data (called when this tab is opened). The ID box is only
+     * updated if nothing is being typed, so a half-filled form is never wiped.
+     */
+    public void refresh() {
+        idField.setText(String.format("C%03d", resort.peekNextCustomerId()));
+        showList();
+    }
+
     /** Prints every customer, with their family members indented underneath. */
     private void showList() {
         resultsText.setText("");
@@ -134,7 +163,8 @@ public class CustomersPanel extends ResortPanel implements ActionListener {
         for (Customer customer : resort.getCustomers()) {
             resultsText.append(customer.tableRow() + "\n");
             for (FamilyMember member : customer.getFamily()) {
-                resultsText.append(String.format("        family: %s%n", member));
+                resultsText.append(String.format("          \u2514 family: %s (%s)%n",
+                        member.getName(), capitalise(member.getLevel())));
             }
         }
         resultsText.setCaretPosition(0);

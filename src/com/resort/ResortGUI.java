@@ -224,7 +224,9 @@ public class ResortGUI extends JFrame implements ActionListener {
         // Refresh a tab's data whenever it is opened, so it reflects changes made in other tabs
         tabbedPane.addChangeListener(e -> {
             Component selected = tabbedPane.getSelectedComponent();
-            if (selected == createBundlePanel) {
+            if (selected == customersPanel) {
+                customersPanel.refresh();
+            } else if (selected == createBundlePanel) {
                 createBundlePanel.refreshCustomers();
             } else if (selected == bundlesPanel) {
                 bundlesPanel.refreshBundles();
